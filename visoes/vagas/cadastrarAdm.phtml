@@ -1,0 +1,36 @@
+<div style='width:100%; text-align:center;'>
+	<h2>Cadastrar Vaga<h2>
+</div>
+
+<?php $HTML->formulario(); ?>
+<div class='ui column center aligned grid'>
+	<div class='column' style='width:auto;'>
+		<div class='ui teal left aligned segment' style='text-align:left;'>	
+			<div class='column divForm'>			
+				<?php
+					$HTML->campo('titulo');
+					$HTML->campo('empresa');
+					$HTML->campo('descricaopub');
+				?>			
+			</div>	
+			<div class='column divForm'>	
+				<?php $HTML->campo('descricaopr'); ?>
+
+			<script type="text/javascript">
+				$('.ui.checkbox').checkbox();
+			</script>
+			<div class='field'>
+				<div class="ui checked toggle checkbox">
+				  <input type="checkbox" id="example-id" checked="" name="ativa">
+				  <label for="example-id"><strong>Ativa</strong></label>
+				</div>
+			</div>
+			<br>
+				<?php $HTML->submeter(); ?>	
+			</div>
+
+			
+		</div>
+	</div>
+</div>
+<?php $HTML->formularioFim(); ?>

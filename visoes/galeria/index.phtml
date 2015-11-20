@@ -1,0 +1,64 @@
+<?php
+  function botoes ($id)
+  {
+    return "<div class='tiny ui icon button balao' data-content='Visualizar' onClick=\"link('galeria/visualizar/id:$id')\"><i class='unhide icon'></i></div>
+            <div class='tiny ui icon button balao' data-content='Editar' onClick=\"link('galeria/editar/id:$id')\"><i class='pencil icon'></i></div>
+            <div class='tiny ui red icon button balao' data-content='Deletar' onClick=\"link('galeria/deletar/id:$id')\"><span id=''><i class='trash icon'></i></span></div>";
+  }
+
+  function pegaFoto ($foto)
+  { 
+    if ($foto == '')
+      return '';
+
+    $caminho = URL . '/public/imagens/'. $foto;
+    return "<img class='rounded ui image tiny' src='$caminho'/>";
+  }
+?>
+<script>
+  var ORDEM_CAMPO = '<?php if(isset($_GET['campo'])) echo $_GET['campo']; ?>';
+  var ORDEM_VAR   = '<?php if(isset($_GET['ordem'])) echo $_GET['ordem']; ?>';
+
+  $(document).ready(function(){ 
+    $('.ui.selection.dropdown').dropdown(); 
+    $('.ui.dropdown').dropdown(); 
+  });
+</script>
+<div style='width:100%; text-align:center; text-transform: uppercase;'>
+  <h2><i class='photo icon'></i>Galerias</h2>
+</div> 
+<div class='ui column center aligned grid'>
+  <div class='column' style='width: auto;'>
+
+    <div class='ui blue circular label' style='float:left;'>
+      <strong id='totalBusc'>Total: <?php echo $dados['total']; ?></strong>
+    </div>
+
+    <br>  
+
+    <?php
+      $HTML->iniciarTabela(); 
+
+        $HTML->iniciarCabecalho();
+
+          $HTML->titulo("<i class='ui photo icon'></i>");
+          $HTML->titulo('Galeria');
+          $HTML->titulo('QTD');
+          $HTML->titulo();
+
+        $HTML->finalizarCabecalho();
+
+      foreach ($dados['galerias'] as $galeria) { 
+        $HTML->iniciarLinha();
+          $HTML->celula(pegaFoto($galeria['img1']));
+          $HTML->celula($galeria['titulo_br']);
+          $HTML->celula($galeria['qtd']);
+          $HTML->celula(botoes($galeria['id']));
+        $HTML->finalizarLinha();
+      }
+
+      $HTML->finalizarTabela();
+    ?>
+
+  </div>  
+</div>

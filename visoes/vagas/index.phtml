@@ -1,0 +1,166 @@
+<?php 
+	function addBotoes($id, $ativo, $titulo){
+
+	  $bt = '';
+	  if($ativo > 0)
+	    $bt .= "<div class=\"tiny ui icon button balao\" data-content='Ativa' onclick=\"ativarVaga('$id', '0');\"><i class=\"unlock icon\"></i></div>";
+	  else
+	    $bt .= "<div class=\"tiny ui icon button balao\" data-content='Desativada' onclick=\"ativarVaga('$id', '1');\"><i class=\"lock icon\"></i></div>";
+
+	  $bt .= "<a class=\"tiny ui icon button balao\" data-content='Visualizar' href='" . URL . "vagas/visualizar/id:{$id}'><i class=\"unhide icon\"></i></a>";
+
+	  $bt .= "<a class=\"tiny ui icon button balao\" data-content='Editar' href='" . URL . "vagas/editar/id:{$id}/ab:acompanhamento'><i class=\"pencil icon\"></i></a>";
+
+	  $bt .= "<a class=\"tiny ui icon button balao\" target='_blank' data-content='E-mails' href='" . URL . "curriculos/listaEmails/vaga:{$id}'><i class=\"mail icon\"></i></a>";	  
+
+	  $bt .= "<a class=\"tiny ui red icon button balao\" data-content='Deletar' onclick=\"deletarVaga('$id', '$titulo');\"><i class=\"trash icon\"></i></a>";  
+
+	  return $bt;
+	}
+
+	function campo($campo, &$HTML, $icone = null) {
+		echo "<div style='width:auto; float: left; text-align:left; margin-right: 20px;'>";
+		$HTML->campoFiltro($campo, isset($_GET[$campo]) ? $_GET[$campo] : '', $icone);
+		echo '</div>';    
+	}
+
+	function campoSelect($campo, $titulo, $valores, $tipo) {
+		$tipo->campo  = $campo;
+		$tipo->setaValor(isset($_GET[$campo]) ? $_GET[$campo] : '');
+		$tipo->setaValores($valores);
+		echo "<div style='width:auto; float: left; text-align:left; margin-right: 20px;'>";
+		echo '<label>' . $titulo . '</label><br>';
+		echo $tipo->campo(null, $campo, 'onkeypress=\'enterSubmit(event);\'');
+		echo '</div>';        
+	}  	
+?>
+
+<?php if(!isset($_POST['filtraAjax'])) { ?>
+<script type="text/javascript">
+	var CONTROLE = 'vagas';
+
+	function ativarVaga (id, valor) {
+		$('#vaga').val(id);
+		$('#ativa').val(valor);
+		$('#form_ativa').submit();
+	}
+
+	function deletarVaga(id, titulo) {
+
+		mensagem = 'Deseja realmente deletar a vaga <strong>' + titulo + '</strong>?';
+		$('#msgConfirmacao').html(mensagem);
+
+		$('#modalConfimar').modal('setting', {
+				closable  : false,
+				onApprove : function() {
+					$('#vaga_deletar').val(id);
+					$('#form_deletar').submit();
+				}
+			}).modal('show');
+	}
+</script>
+
+<?php
+  $tipoFabrica = new \Positiv\TipoFabrica();
+  $select   = $tipoFabrica->pegaTipo('select');
+?>
+
+<div style="width:100%; text-align:center; text-transform: uppercase;">
+  <h2><i class="file list icon"></i>Vagas</h2>
+
+  <a class="ui blue vertical labeled icon submit small button" style="margin-top:-10px;" href="<?php echo URL; ?>vagas/cadastrar">
+    <i class="plus icon"></i>Cadastrar
+  </a>
+</div> 
+
+<br>
+
+ <form class="formulario">
+ 	<input type="text" name='pg' id='pg' value="<?php echo isset($_GET['pg']) ? $_GET['pg'] : 1; ?>" hidden/>
+    <div class="ui column center aligned grid">
+       <div class="column" style="width: auto;">
+		    <div class="ui teal segment" style="width: auto;">
+		  		<div style="float:left;">
+		  		<?php 
+		  			campo('titulo', $HTML, 'pencil');
+		  		 	campo('empresa', $HTML, 'pencil'); 
+
+		  		 	$valores = array(1 => 'Sim', 2 => 'Não');
+          			campoSelect('ativa', 'Ativa', $valores, $select);
+		  		 ?>
+		  		</div>
+        <br><br>
+
+        <div  style="float:left;">
+		    <div style="width:auto; float: left; text-align:left;">
+			     <br>
+			    <div class="ui blue vertical labeled circular icon submit button submeterForm" style="" onClick="filtrar('')" id='submeter'>
+		    		  <i class=" search icon"></i>Filtrar
+	    		</div>
+	  	</div></div></div>
+
+
+    <div class="ui teal circular label" style="float:left;">
+      <strong id="totalBusc">Total: <?php echo $dados['total']; ?></strong>
+    </div>	
+
+		</div>
+	</div>
+</form>
+
+<br>
+
+<div class='ui column center aligned grid'>
+  <div class='column' style='width: auto;' id='tabela'>
+
+    <?php tabela($dados, $HTML); ?>
+ 
+   </div>
+  </div>
+
+  <form action='' id='form_ativa' method='POST'>
+  	<input id='vaga'  name='vaga'  hidden/>
+  	<input id='ativa' name='ativa' hidden/>
+  </form>
+
+  <form action='' id='form_deletar' method='POST'>
+  	<input id='vaga_deletar'  name='vaga_deletar'  hidden/>
+  </form>  
+
+<?php 
+	} else {
+		tabela($dados, $HTML);
+		echo "<input name='quantidadeResultados' id='quantidadeResultados' value='" . $dados['total'] . "' hidden />";
+	}
+
+	function tabela($dados, $HTML) {
+	    $HTML->iniciarTabela(); 
+
+	      $HTML->iniciarCabecalho();
+
+	        $HTML->titulo('Título');
+	        $HTML->titulo('Empresa');
+	        $HTML->titulo('Candidatos');
+			$HTML->titulo("<img hidden='' id='carregandoIco' width='30px' style='margin-bottom:-10px;'' src='" . URL . "/public/images/carregando.gif'>");
+
+	      $HTML->finalizarCabecalho();
+
+	      foreach ($dados['vagas'] as $vaga) {
+	        $HTML->iniciarLinha();
+	          $HTML->celula($vaga['titulo']);
+	          $HTML->celula($vaga['empresa']);
+	          $HTML->celula($vaga['qtd']); 
+	          $HTML->celula(addBotoes($vaga['id'], $vaga['ativa'], $vaga['titulo']));
+	        $HTML->finalizarLinha();
+	      }
+	 
+
+	    $HTML->finalizarTabela();	
+
+	    if(!isset($_GET['pg']))
+	    	$_GET['pg'] = 1;
+	    
+	    include RAIZ . SEPARADOR . 'visoes' . SEPARADOR . 'curriculos' . SEPARADOR . 'paginacao.phtml';	
+	}
+
+?>

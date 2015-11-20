@@ -1,0 +1,179 @@
+<?php
+  function validacoesJs()
+  {
+?>
+  var spryselect1 = new Spry.Widget.ValidationSelect("sprytextfield11", {validateOn:["change", "blur"]});
+
+  var spryselect2 = new Spry.Widget.ValidationSelect("sprytextfield12", {validateOn:["change", "blur"]});
+
+  var spryselect3 = new Spry.Widget.ValidationSelect("sprytextfield14", {validateOn:["change", "blur"]});  
+
+  var sprytextfield12 = new Spry.Widget.ValidationTextField("sprytextfield12", "none", {validateOn:["blur", "change"]});
+
+
+<?php    
+
+  }
+?>
+<input type='file' name='foto' id='foto' hidden />
+  <h2>Interesse Profissional</h2>
+
+
+
+  
+
+
+
+  <table width="100%" border="0" cellpadding="2" cellspacing="1" class="bloco">
+
+
+
+    <tr>
+
+
+
+      <td align="right" bgcolor="#F3F3F3"><strong>*Cargo de Interesse</strong></td>
+
+
+
+      <td bgcolor="#FFFFFF"><span id="sprytextfield11">
+
+
+
+        <!-- <input type="text" name="cargoInteresse" id="cargoInteresse" /> -->
+ <select name="cargoInteresse" id="cargoInteresse">
+
+          <option></option>
+
+        <?php 
+          cargos($dados, \Positiv\Sessao::pegar('cargoInteresse'));
+        ?>
+
+        </select>
+
+
+      <span class="selectRequiredMsg">Selecione o cargo de interesse.</span></span></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="right">&nbsp;</td>
+
+
+
+      <td><label for="nome"></label></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+      <td colspan="2" bgcolor="#d9e3e8"><strong>*Área profissional desejada (selecione todas as aréas nas quais deseja atuar)</strong></td>
+    </tr>
+    <tr>
+      <td align="right" width="35%">Nível 
+        <span id="sprytextfield12">
+          <select name="interNivel1" id="interNivel1" onchange="nivel()">
+            <option value="">Selecione uma opção</option>
+            <option value="Primeiro Emprego" <?php echo (\Positiv\Sessao::pegar('interNivel1')  == 'Primeiro Emprego') ? 'selected' : ''; ?>>Primeiro Emprego</option>
+            <?php niveis($dados, \Positiv\Sessao::pegar('interNivel1')); ?>
+          </select>
+          <span class="selectRequiredMsg">Obrigatório.</span>
+        </span>
+      </td>
+      <td>
+        &nbsp;&nbsp;&nbsp;&nbsp;Segmento
+        <span id="sprytextfield14">
+          <select name="interSegmento1">
+            <option value="">Selecione uma opção</option>
+            <?php segmentos($dados, \Positiv\Sessao::pegar('interSegmento1')); ?>
+          </select>  
+          <span class="selectRequiredMsg">Campo Obrigatório.</span>
+        </span>          
+      </td>
+    </tr>
+
+    <tr>
+      <td align="right" width="35%">Nível 
+        <select name="interNivel2">
+          <option value="">Selecione uma opção</option>
+         <?php niveis($dados, \Positiv\Sessao::pegar('interNivel2')); ?>
+        </select>
+      </td>
+      <td>
+        &nbsp;&nbsp;&nbsp;&nbsp;Segmento
+        <select name="interSegmento2">
+          <option value="">Selecione uma opção</option>
+          <?php segmentos($dados, \Positiv\Sessao::pegar('interSegmento2')); ?>
+        </select>  
+      </td>
+    </tr>  
+
+    <tr>
+      <td align="right" width="35%">Nível 
+        <select name="interNivel3">
+          <option value="">Selecione uma opção</option>
+          <?php niveis($dados, \Positiv\Sessao::pegar('interNivel3')); ?>
+        </select>
+      </td>
+      <td>
+        &nbsp;&nbsp;&nbsp;&nbsp;Segmento
+        <select name="interSegmento3">
+          <option value="">Selecione uma opção</option>
+          <?php segmentos($dados, \Positiv\Sessao::pegar('interSegmento3')); ?>
+        </select>  
+      </td>
+    </tr>      
+
+
+    <tr>
+
+
+
+      <td align="right">&nbsp;</td>
+
+
+
+      <td>&nbsp;</td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="right" bgcolor="#F3F3F3"><strong>*Pretensão Salarial:</strong></td>
+
+
+
+      <td bgcolor="#FFFFFF"><span id="sprytextfield12">
+
+
+
+        <input type="text" name="pretensaoSalarial" class="moeda" value='<?php echo \Positiv\Sessao::pegar('pretensaoSalarial'); ?>' id="pretensaoSalarial" />
+
+
+
+      <span class="textfieldRequiredMsg">Digite uma pretensão salarial</span></span> (estimativa)</td>
+
+
+
+    </tr>
+
+
+
+  </table>

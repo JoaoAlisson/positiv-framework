@@ -1,0 +1,73 @@
+<?php
+function addBotoes($id, $nome){
+
+  $bt = "<div class=\"tiny ui red icon button balao\" onclick=\"deletarUsuario('$id', '$nome');\" data-content='Visualizar'><i class=\"trash icon\"></i></div>";
+
+  return $bt;
+}
+?>
+
+<div style="width:100%; text-align:center; text-transform: uppercase;">
+  <h2><i class="user icon"></i>Usuário</h2>
+
+  <a class="ui blue vertical labeled icon submit small button" style="margin-top:-10px;" href="<?php echo URL; ?>usuarios/cadastrar">
+    <i class="plus icon"></i>Cadastrar
+  </a>
+
+ <a class="ui blue vertical labeled icon submit small button" style="margin-top:-10px;" href="<?php echo URL; ?>usuarios/editar">
+    <i class="edit icon"></i>Meu Usuário
+  </a>  
+</div>  
+
+<script type="text/javascript">
+	var CONTROLE = 'vagas';
+
+	function deletarUsuario(id, titulo) {
+
+		mensagem = 'Deseja realmente deletar o usuário <strong>' + titulo + '</strong>?';
+		$('#msgConfirmacao').html(mensagem);
+
+		$('#modalConfimar').modal('setting', {
+				closable  : false,
+				onApprove : function() {
+					$('#usuario_deletar').val(id);
+					$('#form_deletar').submit();
+				}
+			}).modal('show');
+	}
+</script>
+
+<form method='POST' action='' id='form_deletar'/>
+	<input hidden id='usuario_deletar' name='usuario_deletar' value='' />
+</form>
+<br>
+
+<div class='ui column center aligned grid'>
+  <div class='column' style='width: auto;' id='tabela'>
+
+<?php
+    $HTML->iniciarTabela(); 
+
+      $HTML->iniciarCabecalho();
+
+        $HTML->titulo('Nome');
+        $HTML->titulo('Email');
+
+        $HTML->titulo();
+
+      $HTML->finalizarCabecalho();
+
+      foreach ($dados['usuarios'] as $usuario)
+      	if($usuario['tipo'] != '2') {
+	        $HTML->iniciarLinha();
+	          $HTML->celula($usuario['nome']);
+	          $HTML->celula($usuario['login']);        
+	          $HTML->celula(addBotoes($usuario['id'], $usuario['nome']));   
+	        $HTML->finalizarLinha();
+	    }
+ 
+    $HTML->finalizarTabela();
+?>
+
+   </div>
+  </div>

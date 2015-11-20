@@ -1,0 +1,155 @@
+<?php 
+  function botoes ($id, $status)
+  {
+    $btPublicar = '';
+    if($status == 1)
+        $btPublicar = "<div class='tiny ui icon button balao green' data-content='Despublicar' onClick=\"despublicarComentario('$id')\"><i class='unlock icon'></i></div>";
+    else
+        $btPublicar = "<div class='tiny ui icon button balao' data-content='Publicar' onClick=\"publicarComentario('$id')\"><i class='lock icon'></i></div>";
+
+    return $btPublicar . "<div class='tiny ui red icon button balao' data-content='Deletar' onClick=\"deletarComentario('$id')\"><span id=''><i class='trash icon'></i></span></div>";
+  }
+
+  function pegaFoto ($foto)
+  { 
+    if ($foto == '')
+      return '';
+
+    $caminho = URL . '/public/imagens/'. $foto;
+    return "<img class='rounded ui image tiny' src='$caminho'/>";
+  }
+
+  function trataData ($data)
+  {
+    $novaData = '';
+
+    $novaData  = pegaSoData($data) . ' às ';
+    $novaData .= pegaHora($data);
+
+    return $novaData;
+  }
+
+  function pegaHora($hora)
+  {
+    $hora = explode(' ', $hora);
+    $hora = $hora[1];
+
+    $hora = explode(':', $hora);
+    return $hora[0] . ':' . $hora[1];
+  }
+
+  function pegaSoData ($data)
+  {
+    $data = explode(' ', $data);
+    $data = $data[0];
+
+    $data = explode('-', $data);
+
+    return $data[2] . '/' . $data[1] . '/' . $data[0];
+  }
+
+?>
+<script type="text/javascript" src="../public/js/comentarios.js"></script>
+<link rel="stylesheet" href="../public/css/comentarios.css">
+<br><br>
+
+<script type='text/javascript'>$(document).ready(function(){ $('.ui.selection.dropdown').dropdown(); $('.ui.dropdown').dropdown() });</script>
+
+
+ <form id="formularioListagem" action="" method="post">
+    <div class="ui column center aligned grid">
+       <div class="column" style="width: auto;">
+    <div class="ui green segment" style="width: auto;">
+
+    <div style='width:auto; float: left; text-align:left; margin-right: 20px;'>
+
+        <div class="field" id="campo_consagracao">
+        <label>Filtrar por Estatus</label>
+        <div class="ui left labeled icon input">
+            <div class="ui search dropdown selection" id="select_consagracao"> 
+                <input type="hidden" name="listagem" value="<?php if(isset($_POST['listagem'])) echo $_POST['listagem']; else echo '3'; ?>" id="listagem" class="" onchange="filtrar()" style="max-width:450px; min-width:300px;"> <i class="triangle down icon disabled"></i> 
+                <div class="text" data-value="" style="max-width:450px; min-width:100px;"></div> 
+                <div class="menu transition hidden" tabindex="-1" style="">
+                    <div class="item active selected" data-value=""></div>
+                    <div class="item" data-value="1">Publicados</div>
+                    <div class="item" data-value="2">Não Publicados</div>
+                    <div class="item" data-value="3">Todos</div>
+                </div>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+
+  </div>
+  </div></div>
+  </form>
+
+
+<div class="ui column center aligned grid">
+       <div class="column" style="width:auto;">
+
+<?php foreach ($dados as $comentario) { ?>
+             <div class="comentarios" id="teste">
+            <div class="botoes">
+                <?php echo botoes($comentario['id'], $comentario['status']); ?>
+            </div>
+                <div class="fotoClasse">
+                    <?php 
+                        $imagem = $comentario['fotoCampo'];
+                        if($imagem == '') 
+                            $imagem = 'default.png'; 
+                    ?>
+                    <img class="foto" src="<?php echo URL . 'public/imagens/' .$imagem; ?>" class="estrelasComent" alt="">             
+                </div>
+                <div class="seta-esquerda"></div>
+                <div class="ladoDaFoto">
+                    <div class="informacoesUser">
+                        <h2 class="nome" id="nome<?php echo $comentario['id']; ?>"><?php echo $comentario['nome']; ?></h2>
+                        <span class="dataComent"><?php echo trataData($comentario['data']); ?></span>
+                    </div>
+                    <div class="linha"></div>
+                    <div class="comentarioMaisEstrelas">
+                        <div class="classificacaoEstrelas">
+                            <?php for ($i = 1; $i <= 5; $i++) { 
+                                if($i <= $comentario['estrelas'])
+                                    echo "<img src='../../assets/images/star-on.png' class='estrelasComent' alt=''>";
+                                else
+                                    echo "<img src='../../assets/images/star-off.png' class='estrelasComent' alt=''>";
+                            } ?>
+                        </div>                
+                        <div class="comentario"><?php echo nl2br($comentario['comentario']); ?></div>
+                    </div>
+                </div>
+            </div>   
+    <hr>
+<?php } ?>
+        
+    </div>   
+</div>  
+
+<div class="ui small modal canfirmar" id="modalConfimar">
+  <i class="close icon"></i>
+  <div class="header">
+    Confirmação
+  </div>
+  <div class="content" id="msgConfirmacao"> 
+  </div>
+  <div class="actions">
+    <div class="ui positive labled icon button">
+      <i class="ui thumbs up icon"></i>
+      Sim
+    </div>    
+    <div class="ui negative labled icon button">
+      <i class="ui thumbs down icon"></i>
+      Não
+    </div>
+  </div>
+</div>
+
+<form id='formulario' method='post' action='' hidden>
+    <input type='text' id='id' name='id' hidden/>
+    <input type='text' id='acao' name='acao' hidden/>
+    <input type='text' id='listagem2' name="listagem" hidden />
+</form>

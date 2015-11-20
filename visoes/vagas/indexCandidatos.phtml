@@ -1,0 +1,222 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+<title>Currículos - Logado</title>
+
+<link href="<?php echo URL; ?>public/css/estiloNovo.css" rel="stylesheet" type="text/css" />
+<link href='http://fonts.googleapis.com/css?family=Alegreya+Sans' rel='stylesheet' type='text/css'>
+
+<link rel="shortcut icon" href="<?php echo URL; ?>favicon.ico" type="image/x-icon" />
+
+<script src="<?php echo URL; ?>public/js/valid.js"></script>
+<script type="text/javascript" src="<?php echo URL; ?>public/js/jquery.js"></script>
+<script type="text/javascript">
+
+function confirmar(id) {
+
+	$('.telaConfirma').fadeIn(500);
+
+}
+
+
+
+function carregar(acao) {
+	if(acao == "abrir"){
+		$('.confirmaFundo').fadeIn(500);
+	}else{
+		$('.telaConfirma').fadeOut(500);
+		$('.confirmaFundo').fadeOut(500);
+	}
+}
+
+
+
+$(document).keydown(function(event) { // caso seja precionado ESC chama mostrarLogin('0')
+        if (event.keyCode == 27) 
+			mostrarLogin('0');
+    });
+
+
+
+function mostrarLogin(acao){
+	if(acao == "1")
+		$('.mascara').fadeIn(400);
+	else
+		$('.mascara').fadeOut(400);
+}
+
+</script>
+
+<script type="text/javascript">
+
+function verificarLogin() {
+	var x = document.getElementById('email2');
+	$.post('verificarLogin.php', { login: x.value },
+		function(output) {
+			$('#retorno').html(output).fadeIn(1000);
+		});
+}
+
+
+
+function mostrarSubmit() {
+
+	$('#submit').fadeIn(200);
+
+	$('#verlogin').fadeOut(200);
+
+}
+
+function esconderSubmit() {
+
+	$('#submit').fadeOut(200);
+
+	$('#retorno').fadeOut(200);
+
+	$('#verlogin').fadeIn(200);
+
+}
+
+
+
+</script>
+
+
+
+</head>
+
+<body>
+
+<!--bloco para confirmação de cadastro de curriculo ou empresa-->
+
+
+
+<div class="topo" style="height:150px;">
+<div class="topoinner" style="height:150px;">
+
+
+<div class="menu">
+<div class="menuinner" >
+<a href="<?php echo URL; ?>visualizar"><img src="<?php echo URL; ?>public/images/titulo.png" width="344" height="65" border="0" /></a><br />
+<div>
+<a target="_blank" href="<?php echo URL; ?>curriculos/visualizar">Currículo &nbsp;|&nbsp;</a><a href="<?php echo URL; ?>curriculos/editar"> Atualizar Currículo &nbsp;|</a>
+<a href="<?php echo URL; ?>vagas">&nbsp; Vagas</a>
+</div>
+</div>
+
+<!--LOGIN-->
+
+<script type="text/javascript">
+var IDglobal = 0;
+$(document).ready(function() {
+	$(".lista").mouseover(function() {
+		id = $(this).attr('id');
+
+		if(IDglobal != id) {
+			$(".esconderTodos").slideUp();
+			$("#lista"+id).slideDown();
+			IDglobal = id;
+		}
+	});
+
+	$(".lista").mouseout(function() {
+		id = $(this).attr('id');
+
+		if($('.lista:hover').length === 0) {
+			$(".esconderTodos").slideUp();
+			IDglobal = 0;
+		}
+	
+	});
+});
+
+function recuperarSenha() {
+
+	
+
+	$.get('recuperar_senha.php', { email: document.login.login.value },
+
+		function(output) {
+
+			$('#loginDisplay').html(output).fadeOut(10);
+
+			$('#loginDisplay').html(output).fadeIn(1000);
+
+		});
+
+}
+
+</script>
+
+<!--FINAL DO LOGIN-->
+
+
+</div>
+<div style="float:right; margin-top:-23px;"><a style="color: rgb(130, 126, 128);" href="<?php echo URL; ?>login/deslogar"><h2>Deslogar</h2></a></div>
+</div>
+<div class="transparente" style="margin-top:-170px;"></div>
+</div>
+
+<style type="text/css">
+	.botao {
+		padding: 3px;
+		border-radius: 2px;
+		border: 1px solid;
+		border-color: rgb(130, 126, 128);
+		cursor: pointer;
+	}
+</style>
+
+<div class="sombra"></div>
+<div class="conteudo">
+
+<h2>Vagas: </h2>
+	<div style="min-height: 300px; padding-left: 30px;">
+	<br>
+		<table style="width:100%">
+		<?php
+			foreach ($dados['vagas'] as $vaga) {				
+		?>
+		  <tr style='background: rgba(219, 219, 223, 0.4);' class='lista' id='<?php echo $vaga['id']; ?>'>
+		    <td style='padding-left:10px; width:700px; '>
+		    	<strong><?php echo $vaga['titulo']; ?></strong>	
+		    	<br><div style='padding-left:10px; display:none;' class='esconderTodos' id='lista<?php echo $vaga['id']; ?>'><?php echo nl2br($vaga['descricaopub']); ?></div>
+		    </td>
+		    <td>
+		    	<form action='' method='POST'>
+		    		<input hidden name='vaga' value='<?php echo $vaga['id']; ?>'/>
+		    		<?php 
+		    			if($vaga['candidatado'] == 0)
+		    				echo "<input type='submit' name='candidatar' class='botao' value='Candidatar-se'>";
+		    			else
+		    				echo "<input type='submit' name='descandidatar' class='botao' value='Descandidatar'>";
+		    		?>
+		    	</form>
+		    </td>
+		  </tr>
+		<?php
+			}	
+		?>	  
+		</table>	
+	</div>
+
+
+
+<div class="clear"></div>
+</div>
+
+<div class="bottom">
+  	﻿<div class="creditos">Copyright Lucrativia 2015 ©, Todos os Direitos Reservados.</div>
+<div class="clear"></div>  
+
+</div>
+
+
+</body>
+
+</html>

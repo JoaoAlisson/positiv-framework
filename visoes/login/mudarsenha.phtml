@@ -1,0 +1,182 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+<title>Alterar Senha</title>
+
+<link href="<?php echo URL; ?>public/css/estiloNovo.css" rel="stylesheet" type="text/css" />
+<!-- <link href='http://fonts.googleapis.com/css?family=Alegreya+Sans' rel='stylesheet' type='text/css'> -->
+
+<link rel="shortcut icon" href="<?php echo URL; ?>favicon.ico" type="image/x-icon" />
+
+<script src="<?php echo URL; ?>public/js/valid.js"></script>
+<script type="text/javascript" src="<?php echo URL; ?>public/js/jquery.js"></script>
+<script type="text/javascript">
+
+function confirmar(id) {
+
+	$('.telaConfirma').fadeIn(500);
+
+}
+
+
+
+function carregar(acao) {
+	if(acao == "abrir"){
+		$('.confirmaFundo').fadeIn(500);
+	}else{
+		$('.telaConfirma').fadeOut(500);
+		$('.confirmaFundo').fadeOut(500);
+	}
+}
+
+
+
+$(document).keydown(function(event) { // caso seja precionado ESC chama mostrarLogin('0')
+        if (event.keyCode == 27) 
+			mostrarLogin('0');
+    });
+
+
+
+function mostrarLogin(acao){
+	if(acao == "1")
+		$('.mascara').fadeIn(400);
+	else
+		$('.mascara').fadeOut(400);
+}
+
+</script>
+
+<script type="text/javascript">
+
+function verificarLogin() {
+	var x = document.getElementById('email2');
+	$.post('verificarLogin.php', { login: x.value },
+		function(output) {
+			$('#retorno').html(output).fadeIn(1000);
+		});
+}
+
+
+
+function mostrarSubmit() {
+
+	$('#submit').fadeIn(200);
+
+	$('#verlogin').fadeOut(200);
+
+}
+
+function esconderSubmit() {
+
+	$('#submit').fadeOut(200);
+
+	$('#retorno').fadeOut(200);
+
+	$('#verlogin').fadeIn(200);
+
+}
+
+
+
+</script>
+
+
+
+</head>
+
+<body>
+
+<!--bloco para confirmação de cadastro de curriculo ou empresa-->
+
+
+
+<div class="topo" style="height:150px;">
+<div class="topoinner">
+
+
+<div class="menu">
+<div class="menuinner">
+<a href="<?php echo URL; ?>"><img src="<?php echo URL; ?>public/images/titulo.png" width="344" height="65" border="0" /></a><br />
+<div>
+<a href="<?php echo URL; ?>">Página Incial&nbsp;&nbsp;|</a><a href="<?php echo URL; ?>comofunciona">&nbsp;&nbsp;Como Funciona</a>
+</div>
+</div>
+<!--LOGIN-->
+
+<script type="text/javascript">
+
+function recuperarSenha() {
+
+	
+
+	$.get('recuperar_senha.php', { email: document.login.login.value },
+
+		function(output) {
+
+			$('#loginDisplay').html(output).fadeOut(10);
+
+			$('#loginDisplay').html(output).fadeIn(1000);
+
+		});
+
+}
+
+</script>
+
+
+
+
+
+<!--FINAL DO LOGIN-->
+
+
+</div>
+
+</div>
+
+</div>
+
+<div class="sombra"></div>
+<div class="conteudo menuinner menu" style="height:350px;">
+<h1>Alterar Senha</h1>
+<?php if($dados['resposta'] == 3) { ?>
+	<br>
+	<h2>A senha foi alterada com sucesso!
+	</h2>
+<?php } else { ?>
+
+	<?php if($dados['erros'] != '') { ?>
+		<h3 style="float:left; color:red;"><?php echo $dados['erros']; ?></h3><br>
+	<?php } ?>
+	<h3 style="float:left;"> &nbsp;  E-mail: <?php echo $dados['email']; ?> <h3>
+	<form action="" method="post" class="form">
+	<label><strong>Nova Senha</strong></label><br>
+ <input type="password" name="senha" id="senha" value="<?php echo isset($_POST['senha']) ? $_POST['senha'] : '*********'; ?>"  onclick="this.value=''" style="width:200px;"/><br>
+
+	<label><strong>Repita a Senha</strong></label><br>
+ <input type="password" name="senha2" id="senha2" value="<?php echo isset($_POST['senha2']) ? $_POST['senha2'] : '*********'; ?>"  onclick="this.value=''" style="width:200px;"/> 
+	    &nbsp;<input type="submit" name="entrar" id="bntEntar" value="Alterar" style="width:73px;"/><br /><br />
+	</form>
+
+<?php } ?>
+</div>
+
+<div class="clear"></div>
+</div>
+
+<div class="bottom">
+  	﻿<div class="creditos">Copyright Lucrativia 2015 ©, Todos os Direitos Reservados.<br />Developed by C2 Web Soluções</div>
+<div class="clear"></div>  
+
+</div>
+
+
+</body>
+
+</html>

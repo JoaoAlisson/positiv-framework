@@ -1,0 +1,27 @@
+<div style='width:100%; text-align:center;'>
+	<h2><i class='user icon'></i>Minhas Informações<h2>
+</div>
+
+<?php $HTML->formulario(); ?>
+<div class='ui column center aligned grid'>
+	<div class='column' style='width:auto;'>
+		<div class='ui teal left aligned segment' style='text-align:left;'>	
+			<div class='column divForm'>			
+				<?php
+					$HTML->campo('nome', $dados['usuario']['nome']);
+					$HTML->campo('senha');
+				?>			
+
+<div class="field " id="campo_senha2">
+			      	<label>Nova Senha</label><div class="ui corner labeled left icon input"><input type="password" class="camposInput " value="" id="input_senha2" name="senha2"><i class="lock icon"></i></div></div>
+
+			</div>	
+			<br>
+				<?php $HTML->submeter(null, null, 'Salvar'); ?>	
+			</div>
+
+			
+		</div>
+	</div>
+</div>
+<?php $HTML->formularioFim(); ?>

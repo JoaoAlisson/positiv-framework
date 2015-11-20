@@ -1,0 +1,176 @@
+<?php
+	function campo($titulo, $valor)
+	{	
+		if($valor != '')
+			echo "<div class='campos'>
+				  <h4>$titulo</h4>
+				  <p>$valor</p>
+				 </div>";
+	}
+
+	function formataData($data) {
+		list($data, $hora) = explode(' ', $data);
+		list($ano, $mes, $dia) = explode('-', $data);
+
+		return "$dia/$mes/$ano $hora";
+	}	
+
+	function addBotoes($id, $arquivos, $acompanhamento, $nome, $vaga){
+
+	  $bt = "<a class=\"tiny ui icon button balao\" target='_blank' data-content='Visualizar' href='" . URL . "curriculos/visualizar/id:{$id}'><i class=\"unhide icon\"></i></a>";
+
+	  $bt .= "<a class=\"tiny ui icon button balao\" target='_blank' data-content='Comentário' href='" . URL . "curriculos/visualizar/id:{$id}/ab:acompanhamento'><i class=\"comment icon\"></i></a>";
+
+	  $bt .= "<a class=\"tiny ui icon button balao\" target='_blank' data-content='Currículo' href='" . URL . "curriculos/pdf/id:{$id}'><i class=\"file pdf outline icon\"></i></a>";
+
+	  if($arquivos > 0)
+	    $bt .= "<div class=\"tiny ui icon button balao\" target='_blank' data-content='Laudos Anexos' onclick=\"carregararquivos('$acompanhamento')\"><i class=\"attach icon\"></i></div>";
+	  else
+	    $bt .= "<div class=\"tiny ui icon button disabled balao\"><i class=\"attach icon\"></i></div>";
+
+	  $bt .= "<div class=\"tiny ui icon red button balao\" onclick=\"deletarCandidato('$vaga', '$nome')\" data-content='Descandidatar'><i class=\"trash icon\"></i></div>";
+
+	  return $bt;
+	}
+
+?>
+<style type="text/css">
+	.campos {
+		float: left; 
+		margin:6px;
+		width: auto;
+		min-width:100px;
+		color: #706d6d;
+		border-color: #c6c2c2 !important;
+		border-radius: 5px;
+		border-bottom: 2px solid;		
+	}
+</style>
+
+<script type="text/javascript">
+function carregararquivos(idAcomp) {
+    mensagem = 'Carregando Arquivos... <?php echo "<img id=\'carregandoIco\' width=\'25px\' style=\'margin-bottom:-7px;\' src=\'" . URL . "/public/images/carregando.gif\'>"; ?>' ;
+    $('#carregarArquivos').html(mensagem);
+
+    caminho = "<?php echo URL; ?>acompanhamentos/pegararquivos/";
+
+    $.ajax({
+      url: caminho,
+      type: 'POST',
+      data: { id : idAcomp },
+      dataType: "html",
+      success: function (result) {
+        $('#carregarArquivos').html(result);
+      }
+      }); 
+
+
+    $('#modalArquivos').modal('setting', {
+        closable  : false,
+        onApprove : function() {
+
+        }
+      }).modal('show'); 
+}
+
+function deletarCandidato(id, titulo) {
+
+	mensagem = 'Deseja descandidatar <strong>' + titulo + '</strong><br>a esta vaga?';
+	$('#msgConfirmacao').html(mensagem);
+
+	$('#modalConfimar').modal('setting', {
+			closable  : false,
+			onApprove : function() {
+				$('#concorrente').val(id);
+				$('#form_deletar').submit();
+			}
+		}).modal('show');
+}
+</script>
+
+  <form action='' id='form_deletar' method='POST'>
+  	<input id='concorrente'  name='concorrente'  hidden/>
+  </form> 
+
+<div style="width:100%; text-align:center; text-transform: uppercase;">
+  <h2><i class='list icon'></i>Vaga</h2>
+  <h3><?php echo $dados['vaga']['titulo']; ?></h3>
+ 
+</div>
+
+	<div class="ui center aligned grid" style="width:auto;">
+		<a class="ui vertical labeled icon submit small button" href="<?php echo URL . 'vagas/editar/id:' . $_GET['id']; ?>" style="margin-top:10px; margin-bottom:10px; float:center;">
+			<i class="pencil icon"></i>Editar Vaga
+		</a>
+
+		<a class="ui vertical labeled icon submit small button" target="_blank" href="<?php echo URL . 'curriculos/listaEmails/vaga:' . $_GET['id']; ?>" style="margin-top:10px; margin-bottom:10px; float:center;">
+			<i class="mail icon"></i>E-mails
+		</a>		
+	</div>
+
+<div class="ui column center aligned grid">
+	<div class="column" style="width: auto;">
+		<div class="ui teal segment" style="width: auto; max-width:900px;">
+			<?php 
+				campo('Empresa', $dados['vaga']['empresa']);
+				campo('Ativa', ($dados['vaga']['ativa'] == 0) ? 'Não' : 'Sim');
+				campo('Descrição', $dados['vaga']['descricaopub']);
+				campo('Descrição Privada', $dados['vaga']['descricaopr']);			
+				//print_r($dados['curriculos']);	
+			 ?>
+		</div>
+	</div>
+</div>
+
+<div style="width:100%; text-align:center; text-transform: uppercase;">
+  <h3>Currículos Candidatados (<?php echo count($dados['curriculos']); ?>)</h3> 
+</div>
+
+<div class='ui column center aligned grid'>
+  <div class='column' style='width: auto;' id='tabela'>
+
+    <?php
+    $HTML->iniciarTabela(); 
+
+      $HTML->iniciarCabecalho();
+
+        $HTML->titulo('Nome');
+        $HTML->titulo('Email');
+        $HTML->titulo('Telefone');
+        $HTML->titulo('Dt Atualização');
+        $HTML->titulo("<img hidden='' id='carregandoIco' width='30px' style='margin-bottom:-10px;'' src='" . URL . "/public/images/carregando.gif'>");
+
+      $HTML->finalizarCabecalho();
+
+      foreach ($dados['curriculos'] as $curriculo) {
+        $HTML->iniciarLinha();
+          $externo = ($curriculo['externo'] == 0) ? '<i class="sign in icon"></i> ' : '';
+          $HTML->celula($externo . $curriculo['nome']);
+          $HTML->celula($curriculo['email']);
+          $HTML->celula($curriculo['foneCell']);
+          $HTML->celula(formataData($curriculo['dataAtualizacao']));           
+          $HTML->celula(addBotoes($curriculo['curriculo'], $curriculo['arquivos'], $curriculo['acompanhamento'], $curriculo['nome'], $curriculo['id']));
+        $HTML->finalizarLinha();
+      }
+ 
+
+    $HTML->finalizarTabela();
+  ?>
+
+	</div>
+</div>
+
+<div class="ui small modal canfirmar" id="modalArquivos">
+  <i class="close icon"></i>
+  <div class="header">
+  <i class="attach icon"></i>
+    Laudos
+  </div>
+  <div class="content" id="carregarArquivos"> 
+  </div>
+  <div class="actions">
+    <div class="ui positive labled icon button">
+      Sair
+    </div>
+  </div>
+</div>

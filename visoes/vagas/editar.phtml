@@ -1,0 +1,36 @@
+<div style='width:100%; text-align:center;'>
+	<h2>Editar Vaga<h2>
+</div>
+
+<?php $HTML->formulario(); ?>
+<div class='ui column center aligned grid'>
+	<div class='column' style='width:auto;'>
+		<div class='ui teal left aligned segment' style='text-align:left;'>	
+			<div class='column divForm'>			
+				<?php
+					$HTML->campo('titulo', $dados['vaga']['titulo']);
+					$HTML->campo('empresa', $dados['vaga']['empresa']);
+					$HTML->campo('descricaopub', $dados['vaga']['descricaopub']);
+				?>			
+			</div>	
+			<div class='column divForm'>	
+				<?php $HTML->campo('descricaopr', $dados['vaga']['descricaopr']); ?>
+
+			<script type="text/javascript">
+				$('.ui.checkbox').checkbox();
+			</script>
+			<div class='field'>
+				<div class="ui checked toggle checkbox">
+				  <input type="checkbox" id="example-id" <?php if($dados['vaga']['ativa'] != 0) echo "checked=''"; ?> name="ativa">
+				  <label for="example-id"><strong>Ativa</strong></label>
+				</div>
+			</div>
+			<br>
+				<?php $HTML->submeter(null, null, 'Editar'); ?>	
+			</div>
+
+			
+		</div>
+	</div>
+</div>
+<?php $HTML->formularioFim(); ?>

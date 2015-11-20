@@ -1,0 +1,44 @@
+<div style='width:100%; text-align:center;'>
+	<h2>Cadastrar Galeria<h2>
+</div>
+
+<?php $HTML->formulario(); ?>
+<div class='ui column center aligned grid'>
+	<div class='column' style='width:auto;'>
+		<div class='ui left aligned segment' style='text-align:left;'>	
+			<div class='column divForm'>			
+				<?php
+					$HTML->campo('titulo_br');
+					$HTML->campo('titulo_us');
+					
+				?>			
+			</div>		
+
+			<div class='column divForm'>	
+				<?php
+					$HTML->campo('titulo_fr');
+				?>
+			</div>
+		</div>
+
+		<div class='ui left aligned segment' style='text-align:left;'>	
+			<div class='column divForm'>			
+				<?php
+					for ($i = 1; $i <= 5; $i++)
+						$HTML->campo("img$i");
+
+					$HTML->submeter();
+				?>			
+			</div>		
+
+			<div class='column divForm'>	
+				<?php			
+					for ($i = 6; $i <= 10; $i++)
+						$HTML->campo("img$i");
+
+				?>
+			</div>
+		</div>
+	</div>
+</div>
+<?php $HTML->formularioFim(); ?>

@@ -1,0 +1,386 @@
+
+<?php
+	function campo($titulo, $valor)
+	{	
+		if($valor != '')
+			echo "<div class='campos'>
+				  <h4>$titulo</h4>
+				  <p>$valor</p>
+				 </div>";
+	}
+
+	function data1($data)
+	{	
+		if($data == '' OR $data == '0000-00-00')
+			return '';
+
+		list($ano, $mes, $dia) = explode('-', $data);
+		return "$dia/$mes/$ano";
+	}
+
+	function moeda($valor)
+	{
+		return 'R$ ' . number_format($valor, 2, ',', '.');
+	}
+
+	function data2($data)
+	{	
+		if($data == '0000-00-00 00:00:00' OR $data == '')
+			return '';
+		
+		list($data, $hora) = explode(' ', $data);
+		return data1($data) . ' às ' . $hora;
+	}
+
+	function idioma($titulo, $campo, $nivel, $idiomas)
+	{	
+		$niveis = array('', 'Fluente', 'Intermediário', 'Básico');
+
+		$idioma = '';
+		if(isset($niveis[$nivel]))
+			if($campo == 1)
+				$idioma = "<strong>&bull; $titulo</strong> - " . $niveis[$nivel];	
+
+		if($idioma != '')
+			$idiomas .= ($idiomas != '') ? '<br>' . $idioma : $idioma;
+
+		return $idiomas;
+	}	
+
+	function informatica($titulo, $campo, $nivel, $informatica)
+	{
+		$niveis = array('', 'Avançado', 'Intermediário', 'Básico');
+
+		$informat = '';
+		if($campo == 1)
+			$informat = "<strong>&bull; $titulo</strong> - " . $niveis[$nivel];	
+
+		if($informat != '')
+			$informatica .= ($informatica	 != '') ? '<br>' . $informat : $informat;
+
+		return $informatica;		
+	}
+
+
+	$temFoto = ($dados['curriculo']['foto'] != '') ? true : false;
+	$altura  = ($temFoto) ? '106' : '40';
+
+?>
+
+<style type="text/css">
+	.campos {
+		float: left; 
+		margin:6px;
+		width: auto;
+		min-width:100px;
+		color: #706d6d;
+		border-color: #c6c2c2 !important;
+		border-radius: 5px;
+		border-bottom: 2px solid;		
+	}
+</style>
+
+<?php if($dados['curriculo']['interno'] != 0) { ?>
+	<div class="ui center aligned grid" style="width:auto;">
+		<a class="ui vertical labeled icon submit small button" href="<?php echo URL . 'curriculos/editar/id:' . $_GET['id']; ?>" style="margin-top:10px; margin-bottom:10px; float:center;">
+			<i class="pencil icon"></i>Editar Currículo
+		</a>
+	</div>
+<?php } ?>
+<div style="height:<?php echo $altura; ?>px;">
+<?php if($temFoto) { ?>
+	<div class="ui rounded image" style="float:left; margin-right:10px;">
+		<div class="ui left corner label">
+				<i class="photo icon"></i>
+			</div>
+		  <img style="max-height: 115px;>" src="<?php echo URL . 'curriculos/imagens/img:' . $dados['curriculo']['foto']; ?>" />
+	</div>
+<?php } ?>
+	<div style="float:left; text-transform: uppercase; margin-top:10px;">
+		<h3><?php echo $dados['curriculo']['nome']; ?></h3>
+	</div>
+</div>
+<br>
+<div class="ui divider"></div>
+<?php
+	$curriculo = $dados['curriculo'];
+	$campos    = $dados['campos'];
+
+	echo '<strong>Data de Cadastro:</strong> ' . data2($curriculo['dataCadastro']);
+	echo '<br><strong>Última Atualização:</strong> ' . data2($curriculo['dataAtualizacao']);
+
+	//Informações Pessoais
+	echo '<div class="ui segment">';
+		echo '<h4 class="ui block header">Informações Pessoais</h4>';
+		campo($campos['email'], $curriculo['email']);
+		campo($campos['facebook'], $curriculo['facebook']);
+		campo($campos['cpf'], $curriculo['cpf']);
+		campo($campos['rg'], $curriculo['rg']);
+		campo($campos['nomeMae'], $curriculo['nomeMae']);
+		campo($campos['dataNascimento'], data1($curriculo['dataNascimento']));
+		campo($campos['sexo'], $curriculo['sexo']);
+
+		$estadoCivil = array('', 'Casado', 'Solteiro', 'Divorciado', 'Viúvo');
+		campo($campos['estadoCivil'], $estadoCivil[$curriculo['estadoCivil']]);
+
+		$qtdFilhos = ($curriculo['qtdFilhos'] > 10) ? 'Mais de 10' : $curriculo['qtdFilhos'];
+		campo($campos['qtdFilhos'], $qtdFilhos);
+
+		campo($campos['cep'], $curriculo['cep']);
+		campo($campos['endereco'], $curriculo['endereco']);
+		campo($campos['numero'], $curriculo['numero']);
+		campo($campos['complemento'], $curriculo['complemento']);
+		campo($campos['bairro'], $curriculo['bairro']);
+		campo($campos['estado'], $curriculo['estado']);
+		campo($campos['cidade'], $curriculo['cidade']);
+		campo('Telefone', $curriculo['foneCell']);
+		campo('Telefone 2', $curriculo['foneFixo']);
+		campo('Telefone 3', $curriculo['foneComercial']);
+
+		$empregado = ($curriculo['empregado'] == '1') ? 'Sim' : 'Não';
+		campo($campos['empregado'], $empregado);
+
+		$habilitado = ($curriculo['habilitacao'] == '2') ? 'Sim' : 'Não';
+		campo($campos['habilitacao'], $habilitado);
+		campo($campos['categoria'], $curriculo['categoria']);
+
+		$deficiente = ($curriculo['deficiencia'] == '1') ? 'Sim' : 'Não';
+		campo($campos['deficiencia'], $deficiente);
+		campo($campos['descricaoDeficiencia'], $curriculo['descricaoDeficiencia']);
+	echo '</div>';
+
+	//Interesse Profissional
+	echo '<div class="ui segment">';
+		echo '<h4 class="ui block header">Interesse Profissional</h4>';	
+		campo($campos['cargoInteresse'], $curriculo['cargoInteresse']);
+		campo($campos['pretensaoSalarial'], moeda($curriculo['pretensaoSalarial']));
+
+		$areas = '';
+		if($curriculo['primeiro'] == 'Primeiro Emprego')
+			$curriculo['interNivel1'] = 'Primeiro Emprego';
+
+		if($curriculo['interNivel1'] != '' OR $curriculo['interSegmento1'] != '')
+			$areas = 'Área - ' . $curriculo['interSegmento1'] . ' | Nível - ' . $curriculo['interNivel1'];
+
+		if($curriculo['interNivel2'] != '' OR $curriculo['interSegmento2'] != '') {
+			if($areas != '')
+				$areas .= '<br>';
+			$areas .= 'Área - ' . $curriculo['interSegmento2'] . ' | Nível - ' . $curriculo['interNivel2'];		
+		}
+
+		if($curriculo['interNivel3'] != '' OR $curriculo['interSegmento3'] != '') {
+			if($areas != '')
+				$areas .= '<br>';
+			$areas .= 'Área - ' . $curriculo['interSegmento3'] . ' | Nível - ' . $curriculo['interNivel3'];		
+		}
+
+		campo('Área(s) Desejada(s)', $areas);
+	echo '</div>';
+
+	//Experiência Profissional
+	if($curriculo['primeiro'] != 'Primeiro Emprego') {
+
+		
+		echo '<div class="ui segment">';
+			echo '<h4 class="ui block header">Experiência Profissional</h4>';	
+
+			//Experiência 1
+			if($curriculo['expNivel1'] != '' OR $curriculo['expSegmento1'] != '' OR $curriculo['expNomeDaEmpresa'] != '')
+			{
+				echo '<div class="ui segment" style="width:auto;">';
+				echo '<h4 class="ui header"> Empresa: ' . $curriculo['expNomeDaEmpresa'] . '</h4>';
+				$segmento = '';
+				if($curriculo['expSegmento1'] != '' OR $curriculo['expNivel1'] != '')
+					$segmento = $curriculo['expSegmento1'] . ' | Nível - ' . $curriculo['expNivel1'];
+
+				campo('Segmento', $segmento);
+				//campo($campos['expNomeDaEmpresa'], $curriculo['expNomeDaEmpresa']);
+				campo($campos['expCargo'], $curriculo['expCargo']);
+
+				$perido = data1($curriculo['expInicio1']);
+				if($curriculo['expFim1'] != '0000-00-00')
+					$perido .= ($perido != '') ? ' a ' . data1($curriculo['expFim1']) : data1($curriculo['expFim1']);
+				
+				campo('Perído', $perido);
+				campo($campos['expUltimoSalarioInt'], moeda($curriculo['expUltimoSalarioInt']));
+
+				campo($campos['expAtribuicoes'], $curriculo['expAtribuicoes']);
+				
+				echo '</div>';
+			}
+
+
+			//Experiência 2
+			if($curriculo['expNivel2'] != '' OR $curriculo['expSegmento2'] != '' OR $curriculo['expNomeDaEmpresa2'] != '')
+			{
+				echo '<div class="ui segment" style="width:auto;">';
+				echo '<h4 class="ui header"> Empresa: ' . $curriculo['expNomeDaEmpresa2'] . '</h4>';
+				$segmento = '';
+				if($curriculo['expSegmento2'] != '' OR $curriculo['expNivel2'] != '')
+					$segmento = $curriculo['expSegmento2'] . ' | Nível - ' . $curriculo['expNivel2'];
+
+				campo('Segmento', $segmento);
+				//campo($campos['expNomeDaEmpresa'], $curriculo['expNomeDaEmpresa']);
+				campo('Último Cargo', $curriculo['expCargo2']);
+
+				$perido = data1($curriculo['expInicio2']);
+				if($curriculo['expFim2'] != '0000-00-00')
+					$perido .= ($perido != '') ? ' a ' . data1($curriculo['expFim2']) : data1($curriculo['expFim2']);
+				
+				campo('Perído', $perido);
+				campo('Último Salário', moeda($curriculo['expUltimoSalarioInt2']));
+
+				campo('Atribuições', $curriculo['expAtribuicoes2']);
+				
+				echo '</div>';
+			}
+
+			//Experiência 3
+			if($curriculo['expNivel3'] != '' OR $curriculo['expSegmento3'] != '' OR $curriculo['expNomeEmpresa3'] != '')
+			{
+				echo '<div class="ui segment" style="width:auto;">';
+				echo '<h4 class="ui header"> Empresa: ' . $curriculo['expNomeEmpresa3'] . '</h4>';
+				$segmento = '';
+				if($curriculo['expSegmento3'] != '' OR $curriculo['expNivel3'] != '')
+					$segmento = $curriculo['expSegmento3'] . ' | Nível - ' . $curriculo['expNivel3'];
+
+				campo('Segmento', $segmento);
+				//campo($campos['expNomeDaEmpresa'], $curriculo['expNomeDaEmpresa']);
+				campo('Último Cargo', $curriculo['expCargo3']);
+
+				$perido = data1($curriculo['expInicio3']);
+				if($curriculo['expFim3'] != '0000-00-00')
+					$perido .= ($perido != '') ? ' a ' . data1($curriculo['expFim3']) : data1($curriculo['expFim3']);
+				
+				campo('Perído', $perido);
+				campo('Último Salário', moeda($curriculo['expUltimoSalarioInt3']));
+
+				campo('Atribuições', $curriculo['expAtribuicoes3']);
+				
+				echo '</div>';
+			}	
+
+			//Experiência 4
+			if($curriculo['expNivel4'] != '' OR $curriculo['expSegmento4'] != '' OR $curriculo['expNomeEmpresa4'] != '')
+			{
+				echo '<div class="ui segment" style="width:auto;">';
+				echo '<h4 class="ui header"> Empresa: ' . $curriculo['expNomeEmpresa4'] . '</h4>';
+				$segmento = '';
+				if($curriculo['expSegmento4'] != '' OR $curriculo['expNivel4'] != '')
+					$segmento = $curriculo['expSegmento4'] . ' | Nível - ' . $curriculo['expNivel4'];
+
+				campo('Segmento', $segmento);
+				//campo($campos['expNomeDaEmpresa'], $curriculo['expNomeDaEmpresa']);
+				campo('Último Cargo', $curriculo['expCargo4']);
+
+				$perido = data1($curriculo['expInicio4']);
+				if($curriculo['expFim4'] != '0000-00-00')
+					$perido .= ($perido != '') ? ' a ' . data1($curriculo['expFim4']) : data1($curriculo['expFim4']);
+				
+				campo('Perído', $perido);
+				campo('Último Salário', moeda($curriculo['expUltimoSalarioInt4']));
+
+				campo('Atribuições', $curriculo['expAtribuicoes4']);
+				
+				echo '</div>';
+			}			
+
+			//Experiência 5
+			if($curriculo['expNivel5'] != '' OR $curriculo['expSegmento5'] != '' OR $curriculo['expNomeEmpresa5'] != '')
+			{
+				echo '<div class="ui segment" style="width:auto;">';
+				echo '<h4 class="ui header"> Empresa: ' . $curriculo['expNomeEmpresa5'] . '</h4>';
+				$segmento = '';
+				if($curriculo['expSegmento5'] != '' OR $curriculo['expNivel5'] != '')
+					$segmento = $curriculo['expSegmento5'] . ' | Nível - ' . $curriculo['expNivel5'];
+
+				campo('Segmento', $segmento);
+				//campo($campos['expNomeDaEmpresa'], $curriculo['expNomeDaEmpresa']);
+				campo('Último Cargo', $curriculo['expCargo5']);
+
+				$perido = data1($curriculo['expInicio5']);
+				if($curriculo['expFim5'] != '0000-00-00')
+					$perido .= ($perido != '') ? ' a ' . data1($curriculo['expFim5']) : data1($curriculo['expFim5']);
+				
+				campo('Perído', $perido);
+				campo('Último Salário', moeda($curriculo['expUltimoSalarioInt5']));
+
+				campo('Atribuições', $curriculo['expAtribuicoes5']);
+				
+				echo '</div>';
+			}		
+
+			campo('Informações Adionais', $curriculo['expInformacoes']);
+
+		echo '</div>';
+	}
+
+	//Formação Acadêmica
+	$cursando = array('', '1º ano', '2º ano', '3º ano', '4º ano', '5º ano', '6º ano', 'Incompleto', 'Já Formado');
+	if($curriculo['escNomeCurso'] != '' OR $curriculo['escNomeCurso2'] != '') {
+		echo '<div class="ui segment">';
+			echo '<h4 class="ui block header">Formação Acadêmica</h4>';	
+			if($curriculo['escNomeCurso'] != '') {
+				echo '<div class="ui segment" style="width:auto;">';
+					echo '<h4 class="ui header"> Curso: ' . $curriculo['escNomeCurso'] . '</h4>';			
+					campo('Grau', $curriculo['escGrau']);
+					campo('Área', $curriculo['areaformacao']);
+					campo('Instituição de Ensino', $curriculo['escNomeInstituicao']);
+					campo('Início', data1($curriculo['escDataInicio']));
+					campo('Fim', data1($curriculo['escDataConclusao']));
+
+					campo('Cusando', $cursando[$curriculo['escAno']]);
+				echo '</div>';
+			}	
+
+			if($curriculo['escNomeCurso2'] != '') {
+				echo '<div class="ui segment" style="width:auto;">';
+					echo '<h4 class="ui header"> Curso: ' . $curriculo['escNomeCurso2'] . '</h4>';			
+					campo('Grau', $curriculo['escGrau2']);
+					campo('Área', $curriculo['areaformacao2']);
+					campo('Instituição de Ensino', $curriculo['escNomeInstituicao2']);
+					campo('Início', data1($curriculo['escDataInicio2']));
+					campo('Fim', data1($curriculo['escDataConclusao2']));
+
+					campo('Cusando', $cursando[$curriculo['escAno2']]);
+				echo '</div>';
+			}				
+
+		echo '</div>';
+	}
+
+	//Idiomas
+	if($curriculo['idiomaIngles'] != 0 OR $curriculo['idiomaEspanhol'] != 0  OR $curriculo['idiomaFrances'] != 0  OR $curriculo['idiomaAlemao'] != 0  OR $curriculo['idiomaItaliano'] != 0 ) {
+
+		echo '<div class="ui segment">';
+			echo '<h4 class="ui block header">Idiomas</h4>';
+			echo '<div style="margin-left:10px;">';
+				$idioma = '';
+				$idioma = idioma('Ingles', $curriculo['idiomaIngles'], $curriculo['nivelIdiomaIngles'], $idioma);
+				$idioma = idioma('Espanhol', $curriculo['idiomaEspanhol'], $curriculo['nivelIdiomaEspanhol'], $idioma);
+				$idioma = idioma('Francês', $curriculo['idiomaFrances'], $curriculo['nivelIdiomaFrances'], $idioma);
+				$idioma = idioma('Alemão', $curriculo['idiomaAlemao'], $curriculo['nivelIdiomaAlemao'], $idioma);
+				$idioma = idioma('Italiano', $curriculo['idiomaItaliano'], $curriculo['nivelIdiomaItaliano'], $idioma);
+
+				echo $idioma;
+		echo '</div></div>';
+	}
+
+
+	//Informática
+	if($curriculo['infOffice'] != 0 OR $curriculo['infAplGraficas'] != 0  OR $curriculo['infDes'] != 0  OR $curriculo['infManut'] != 0) {
+
+		echo '<div class="ui segment">';
+			echo '<h4 class="ui block header">Informática</h4>';
+			echo '<div style="margin-left:10px;">';
+				$informatica = '';
+				$informatica = informatica('Pacote Office', $curriculo['infOffice'], $curriculo['nivelInfOffice'], $informatica);
+				$informatica = informatica('Aplicativos Gráficos', $curriculo['infAplGraficas'], $curriculo['nivelInfAplGraficas'], $informatica);
+				$informatica = informatica('Desenvolvimento de software', $curriculo['infDes'], $curriculo['nivelInfDes'], $informatica);
+				$informatica = informatica('Manutenção de computadores e redes', $curriculo['infManut'], $curriculo['nivelInfManut'], $informatica);
+
+				echo $informatica;
+		echo '</div></div>';
+	}
+
+?>

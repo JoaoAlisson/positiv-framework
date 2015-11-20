@@ -1,0 +1,545 @@
+<?php
+	require RAIZ . SEPARADOR . 'libs' . SEPARADOR . 'fpdf' . SEPARADOR . 'fpdf.php';
+
+	header('Content-type: application/pdf');
+	header('Content-Disposition: attachment; filename="Curriculo.pdf"');
+
+	class PDF extends \fpdf
+	{
+
+		private $mes = array("", "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junio", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro");
+
+		private $tipos = array();
+
+		function Header()
+		{
+			$this->SetTextColor(85, 85, 85);
+		    $this->SetFont('Arial','I',9);
+		    $this->Cell(0, -2.7,'www.lucrativia.com.br',0,0,'R');
+		    $pagina = utf8_decode('Página: ');
+		 //   $this->Cell(0, -2,$pagina.$this->PageNo().'/{nb}',0,0,'R');
+		   	
+		    $this->Ln(0);
+		}
+
+		function Footer()
+		{
+
+		    $this->SetY(-6);
+		    $this->SetFont('Arial','I',8);
+		    $this->SetTextColor(85, 85, 85);
+
+			$pagina = utf8_decode('Página: ');
+		    $this->Cell(5,10, $pagina.$this->PageNo().'/{nb}',0,0,'L');
+		    $this->Cell(0,10,  '',0,0,'L');
+		    //$this->Cell(0,10,$pagina.$this->PageNo().'/{nb}',0,0,'R');
+				//$imagem = PASTA_IMAGENS . 'logo.png';
+				//$this->Image($imagem, 15, 27.4, null, 2);		    
+		}
+
+		private function formatar($valor, $campo)
+		{
+			$retorna;
+			if(isset($this->tipos[$campo])){
+				$funcao  = "formata_".$this->tipos[$campo];
+				$retorna = $this->$funcao($valor);
+			}else{
+				$retorna = utf8_decode($valor);
+			}
+			return $retorna;
+		}	
+
+		private function formata_moeda($valor)
+		{
+			$formatado = number_format($valor, 2, ',', '.');
+
+			if(strlen($valor) > 53)
+				$formatado = substr($formatado, 0, 50) . "...";
+
+			return $formatado;
+		}
+
+		private function formata_mes($mes)
+		{
+			$mes = utf8_decode($this->mes[$mes/1]);
+			return $mes;
+		}
+
+		private function formata_data($valor)
+		{
+			if($valor == '0000-00-00'){
+				return '';
+				break;
+			}
+			$valor = explode('-', $valor);
+			$ano   = $valor[0];
+			$mes   = $valor[1];
+			$dia   = $valor[2];
+			return $dia . '/' . $mes . '/' . $ano;
+		}
+	}	
+
+	$pdf = new PDF('P', 'cm', 'A4');	
+
+	$pdf->Open();
+	$pdf->SetMargins(2, 2, 2);
+	$pdf->AliasNbPages();
+	$pdf->AddPage();
+
+	if($dados['curriculo']['foto'] != '') {
+		if(file_exists(PASTA_IMAGENS . $dados['curriculo']['foto'])) {
+			$imagem = PASTA_IMAGENS . $dados['curriculo']['foto'];
+			$pdf->Image($imagem, null, null, null, 3);
+		}
+	}
+
+	$pdf->SetTextColor(85, 85, 85);
+	$pdf->SetFont('arial','B',18);
+
+	$pdf->MultiCell(null, 1, utf8_decode(mb_strtoupper($dados['curriculo']['nome'], 'UTF-8')), 0,'L');  
+
+	$pdf->SetFont('arial','', 12);
+	$estadoCivil = array('', 'Casado', 'Solteiro', 'Divorciado', 'Viúvo');
+	$estadocivel = $estadoCivil[$dados['curriculo']['estadoCivil']] . ', ' . idade($dados['curriculo']['dataNascimento']) . ' anos';
+	$pdf->Cell(0, 0.5, utf8_decode($estadocivel), 0, 1,'L'); 	
+//	$pdf->Cell(0, 0.3, '', 0, 1,'L'); 	
+
+	$pdf->SetFont('arial','', 12);
+	$endereco = $dados['curriculo']['endereco'] . ', ' . $dados['curriculo']['numero'] . ' - ' . $dados['curriculo']['bairro'] . ' - ' . $dados['curriculo']['cidade'] . ',  ' . $dados['curriculo']['estado'];
+	$endereco .= ' - CEP: ' . $dados['curriculo']['cep'];
+	$endereco = utf8_decode(mb_strtoupper($endereco, 'UTF-8'));
+	$pdf->MultiCell(0, 0.5,$endereco, 0,'L');
+
+
+	$contato = 'Telefone: ' . $dados['curriculo']['foneCell'];
+	if($dados['curriculo']['foneFixo'] != '')
+		$contato .= ' ' . $dados['curriculo']['foneFixo'];
+	if($dados['curriculo']['foneFixo'] != '')
+		$contato .= ' ' . $dados['curriculo']['foneComercial'];
+
+	$contato .= ' / ' . $dados['curriculo']['email'];
+
+	$pdf->MultiCell(0, 0.5,$contato, 0,'L');
+
+	if($dados['curriculo']['habilitacao'] == 2) {
+		$habilitado = 'Habilitado';
+		if($dados['curriculo']['categoria'] != '')
+			$habilitado .= ' categoria ' . $dados['curriculo']['categoria'];
+
+		$pdf->Cell(0, 0.6,$habilitado, 0, 1,'L');
+	}
+	
+	$pdf->Ln(0.3);
+	$pdf->SetFont('arial','B',13);	
+
+	$pdf->Cell(0, 0.6, 'OBJETIVO', 0, 1,'L'); 
+	$pdf->Cell(0, -0.5, '_________________________________________________________________', 0, 1, 'L');
+
+	$pdf->Ln(0.7);
+	$pdf->SetFont('arial','', 12);
+	$cargoInteresse = 'Cargo de Interesse: ' . $dados['curriculo']['cargoInteresse'];
+	$cargoInteresse = utf8_decode($cargoInteresse);
+	$pdf->MultiCell(null, 0.5, $cargoInteresse, 0, 'L'); 
+
+	$area = 'Área profissional desejada:';
+	$area = utf8_decode($area);
+	$pdf->MultiCell(null, 0.6,$area, 0, 'L'); 	
+
+		$nivel = ($dados['curriculo']['primeiro'] == 'Primeiro Emprego') ? 'Primeiro Emprego' : $dados['curriculo']['interNivel1'];
+		$pdf->SetX(3.5);
+		$area = ' ' . $dados['curriculo']['interSegmento1'] . '  - Nível: ' . $nivel;
+		$area = chr(149) . utf8_decode($area);
+		$pdf->MultiCell(null, 0.5, $area, 0, 'L'); 
+
+		if($dados['curriculo']['interSegmento2'] != '') {
+			$pdf->SetX(3.5);
+			$area = ' ' . $dados['curriculo']['interSegmento2'] . '  - Nível: ' . $dados['curriculo']['interNivel2'];
+			$area = chr(149) . utf8_decode($area);
+			$pdf->MultiCell(null, 0.5, $area, 0, 'L'); 			
+		}
+
+		if($dados['curriculo']['interSegmento3'] != '') {
+			$pdf->SetX(3.5);
+			$area = ' ' . $dados['curriculo']['interSegmento3'] . '  - Nível: ' . $dados['curriculo']['interNivel3'];
+			$area = chr(149) . utf8_decode($area);
+			$pdf->MultiCell(null, 0.5, $area, 0, 'L'); 			
+		}		
+
+	if($dados['curriculo']['escNomeCurso'] != '' || $dados['curriculo']['escNomeCurso2'] != '') {	
+		$pdf->Ln(0.6);
+		$pdf->SetFont('arial','B',13);	
+		$pdf->Cell(0, 0.6, utf8_decode('FORMAÇÃO'), 0, 1,'L'); 
+		$pdf->Cell(0, -0.5, '_________________________________________________________________', 0, 1, 'L');
+
+		$pdf->Ln(0.7);
+
+		$curso = $dados['curriculo']['escNomeCurso'];
+		if($curso != '') {
+
+			$cursando = ($dados['curriculo']['escAno'] < 7 ) ? ', cursando' : ', concluído'; 
+			$curso = chr(149) . ' ' . utf8_decode($curso . $cursando);
+			$pdf->MultiCell(null, 0.5, $curso, 0, 'L');
+			$pdf->SetX(2.3);
+
+			$facudd = $dados['curriculo']['escNomeInstituicao']; 
+			$facudd = utf8_decode($facudd);
+			$pdf->SetFont('arial', '',12);
+			if($facudd != '')
+				$pdf->MultiCell(null, 0.5, $facudd, 0, 'L');		
+		}
+
+		$curso = $dados['curriculo']['escNomeCurso2'];
+		if($curso != '') {
+
+			$pdf->SetFont('arial', 'B',12);
+			$cursando = ($dados['curriculo']['escAno2'] < 7 ) ? ', cursando' : ', concluído'; 
+			$curso = chr(149) . ' ' . utf8_decode($curso . $cursando);
+			$pdf->MultiCell(null, 0.5, $curso, 0, 'L');
+			$pdf->SetX(2.3);
+
+			$facudd = $dados['curriculo']['escNomeInstituicao2']; 
+			$facudd = utf8_decode($facudd);
+			$pdf->SetFont('arial', '',12);
+			if($facudd != '')
+				$pdf->MultiCell(null, 0.5, $facudd, 0, 'L');		
+		}
+	}
+
+
+	if($dados['curriculo']['primeiro'] != 'Primeiro Emprego') {
+		$pdf->Ln(0.6);
+		$pdf->SetFont('arial','B',13);	
+		$pdf->Cell(0, 0.6, utf8_decode('EXPERIÊNCIA PROFISSIONAL'), 0, 1,'L'); 
+		$pdf->Cell(0, -0.5, '_________________________________________________________________', 0, 1, 'L');
+
+		$pdf->Ln(0.7);
+
+	//experiencia
+		if($dados['curriculo']['expNomeDaEmpresa'] != '') {	
+			$data = data($dados['curriculo']['expInicio1']);
+			$data .= ($data != '') ? ' à ' . data($dados['curriculo']['expFim1']) : data($dados['curriculo']['expFim1']);
+			$data = chr(149) . ' ' . utf8_decode($data);
+			$empresa = utf8_decode(strtoupper($dados['curriculo']['expNomeDaEmpresa']));
+			$data .= ($empresa != '') ? ' - ' . $empresa : '';
+			$pdf->SetFont('arial','B',12);
+			$pdf->MultiCell(null, 0.5, $data, 0, 'L');
+
+			$pdf->SetX(2.3);
+			$pdf->SetFont('arial', '',12);
+
+			$area = 'Segmento: ' . $dados['curriculo']['expSegmento1'] . '  - Nível: ' . $dados['curriculo']['expNivel1'];
+			$area = utf8_decode($area);
+			$pdf->SetX(2.3);
+			$pdf->MultiCell(null, 0.5, $area, 0, 'L'); 	
+
+			
+			$ultimoCargo = $dados['curriculo']['expCargo'];
+			if($ultimoCargo != '') {
+				$pdf->SetX(2.3);
+				$ultimoCargo = 'Último Cargo: ' . $ultimoCargo;
+				$ultimoCargo = utf8_decode($ultimoCargo);
+				$pdf->MultiCell(null, 0.5, $ultimoCargo, 0, 'L');		
+			}
+
+			$atividades = $dados['curriculo']['expAtribuicoes'];
+			if($atividades != '') {
+				$pdf->SetX(2.3);
+				$atividades = 'Principais atividades: ' . $atividades;
+				$atividades = utf8_decode($atividades);
+				$pdf->MultiCell(null, 0.5, $atividades, 0,'L');	 
+			}
+		}
+	//
+
+	//experiencia
+		if($dados['curriculo']['expNomeDaEmpresa2'] != '') {
+			$data = data($dados['curriculo']['expInicio2']);
+			$data .= ($data != '') ? ' à ' . data($dados['curriculo']['expFim2']) : data($dados['curriculo']['expFim2']);
+			$data = chr(149) . ' ' . utf8_decode($data);
+			$empresa = utf8_decode(strtoupper($dados['curriculo']['expNomeDaEmpresa2']));
+			$data .= ($empresa != '') ? ' - ' . $empresa : $empresa;
+			$pdf->SetFont('arial','B',12);
+			$pdf->MultiCell(null, 0.5, $data, 0, 'L');
+
+			$pdf->SetFont('arial', '',12);
+			$pdf->SetX(2.3);
+			$area = 'Segmento: ' . $dados['curriculo']['expSegmento2'] . '  - Nível: ' . $dados['curriculo']['expNivel2'];
+			$area = utf8_decode($area);
+			$pdf->MultiCell(null, 0.5, $area, 0, 'L'); 	
+
+			
+			$ultimoCargo = $dados['curriculo']['expCargo2'];
+			if($ultimoCargo != '') {
+				$pdf->SetX(2.3);
+				$ultimoCargo = 'Último Cargo: ' . $ultimoCargo;
+				$ultimoCargo = utf8_decode($ultimoCargo);
+				$pdf->MultiCell(null, 0.5, $ultimoCargo, 0,'L');		
+			}
+
+			$atividades = $dados['curriculo']['expAtribuicoes2'];
+			if($atividades != '') {
+				$pdf->SetX(2.3);
+				$atividades = 'Principais atividades: ' . $atividades;
+				$atividades = utf8_decode($atividades);
+				$pdf->MultiCell(null, 0.5, $atividades, 0,'L');
+			}
+		}
+	//	
+
+	//experiencia
+		if($dados['curriculo']['expNomeEmpresa3'] != '') {
+			$data = data($dados['curriculo']['expInicio3']);
+			$data .= ($data != '') ? ' à ' . data($dados['curriculo']['expFim3']) : data($dados['curriculo']['expFim3']);
+			$data = chr(149) . ' ' . utf8_decode($data);
+			$empresa = utf8_decode(strtoupper($dados['curriculo']['expNomeEmpresa3']));
+			$data .= ($empresa != '') ? ' - ' . $empresa : $empresa;
+			$pdf->SetFont('arial','B',12);
+			$pdf->MultiCell(null, 0.5, $data, 0, 'L');
+
+			$pdf->SetFont('arial', '',12);
+
+			$area = 'Segmento: ' . $dados['curriculo']['expSegmento3'] . '  - Nível: ' . $dados['curriculo']['expNivel3'];
+			$area = utf8_decode($area);
+			$pdf->SetX(2.3);
+			$pdf->MultiCell(null, 0.5, $area, 0, 'L'); 	
+
+			
+			$ultimoCargo = $dados['curriculo']['expCargo3'];
+			if($ultimoCargo != '') {
+				$pdf->SetX(2.3);
+				$ultimoCargo = 'Último Cargo: ' . $ultimoCargo;
+				$ultimoCargo = utf8_decode($ultimoCargo);
+				$pdf->MultiCell(null, 0.5, $ultimoCargo, 0,'L');		
+			}
+
+			$atividades = $dados['curriculo']['expAtribuicoes3'];
+			if($atividades != '') {
+				$pdf->SetX(2.3);
+				$atividades = 'Principais atividades: ' . $atividades;
+				$atividades = utf8_decode($atividades);
+				$pdf->MultiCell(null, 0.5, $atividades, 0,'L');
+			}
+		}
+	//	
+
+	//experiencia
+		if($dados['curriculo']['expNomeEmpresa4'] != '') {
+			$data = data($dados['curriculo']['expInicio4']);
+			$data .= ($data != '') ? ' à ' . data($dados['curriculo']['expFim4']) : data($dados['curriculo']['expFim4']);
+			$data = chr(149) . ' ' . utf8_decode($data);
+			$empresa = utf8_decode(strtoupper($dados['curriculo']['expNomeEmpresa4']));
+			$data .= ($empresa != '') ? ' - ' . $empresa : $empresa;
+			$pdf->SetFont('arial','B',12);
+			$pdf->MultiCell(null, 0.5, $data, 0, 'L');
+
+			$pdf->SetFont('arial', '',12);
+
+			$area = 'Segmento: ' . $dados['curriculo']['expSegmento4'] . '  - Nível: ' . $dados['curriculo']['expNivel4'];
+			$area = utf8_decode($area);
+			$pdf->SetX(2.3);
+			$pdf->MultiCell(null, 0.5, $area, 0, 'L'); 	
+
+			
+			$ultimoCargo = $dados['curriculo']['expCargo4'];
+			if($ultimoCargo != '') {
+				$pdf->SetX(2.3);
+				$ultimoCargo = 'Último Cargo: ' . $ultimoCargo;
+				$ultimoCargo = utf8_decode($ultimoCargo);
+				$pdf->MultiCell(null, 0.5, $ultimoCargo, 0,'L');		
+			}
+
+			$atividades = $dados['curriculo']['expAtribuicoes4'];
+			if($atividades != '') {
+				$pdf->SetX(2.3);
+				$atividades = 'Principais atividades: ' . $atividades;
+				$atividades = utf8_decode($atividades);
+				$pdf->MultiCell(null, 0.5, $atividades, 0,'L');
+			}
+		}
+	//	
+
+	//experiencia
+		if($dados['curriculo']['expNomeEmpresa5'] != '') {
+			$data = data($dados['curriculo']['expInicio5']);
+			$data .= ($data != '') ? ' à ' . data($dados['curriculo']['expFim5']) : data($dados['curriculo']['expFim5']);
+			$data = chr(149) . ' ' . utf8_decode($data);
+			$empresa = utf8_decode(strtoupper($dados['curriculo']['expNomeEmpresa5']));
+			$data .= ($empresa != '') ? ' - ' . $empresa : $empresa;
+			$pdf->SetFont('arial','B',12);
+			$pdf->MultiCell(null, 0.5, $data, 0, 'L');
+
+			$pdf->SetFont('arial', '',12);
+			$pdf->SetX(2.3);
+			$area = 'Segmento: ' . $dados['curriculo']['expSegmento5'] . '  - Nível: ' . $dados['curriculo']['expNivel5'];
+			$area = utf8_decode($area);
+			$pdf->MultiCell(null, 0.5, $area, 0, 'L'); 	
+
+			
+			$ultimoCargo = $dados['curriculo']['expCargo5'];
+			if($ultimoCargo != '') {
+				$pdf->SetX(2.3);
+				$ultimoCargo = 'Último Cargo: ' . $ultimoCargo;
+				$ultimoCargo = utf8_decode($ultimoCargo);
+				$pdf->MultiCell(null, 0.5, $ultimoCargo, 0,'L');		
+			}
+
+			$atividades = $dados['curriculo']['expAtribuicoes5'];
+			if($atividades != '') {
+				$pdf->SetX(2.3);
+				$atividades = 'Principais atividades: ' . $atividades;
+				$atividades = utf8_decode($atividades);
+				$pdf->MultiCell(null, 0.5, $atividades, 0,'L');	 
+			}
+		}
+	//	
+	}
+	
+
+	$nivel = array('', 'Avançado', 'Intermediário', 'Básico');
+
+
+	$idiomas = false;
+
+	if($dados['curriculo']['idiomaIngles'] != '0'    || 
+		$dados['curriculo']['idiomaEspanhol'] != '0' ||
+		$dados['curriculo']['idiomaFrances'] != '0'  ||
+		$dados['curriculo']['idiomaAlemao'] != '0'   ||
+		$dados['curriculo']['idiomaItaliano'] != '0')
+		$idiomas = true;
+
+	if($idiomas) {
+		$pdf->Ln(0.6);
+		$pdf->SetFont('arial','B',13);	
+		$pdf->Cell(0, 0.6, utf8_decode('IDIOMAS'), 0, 1,'L'); 
+		$pdf->Cell(0, -0.5, '_________________________________________________________________', 0, 1, 'L');
+
+		$pdf->Ln(0.7);		
+		$pdf->SetFont('arial', '',12);
+
+		$office = $dados['curriculo']['idiomaIngles'];
+		if($office != '0' && isset($nivel[$dados['curriculo']['nivelIdiomaIngles']])) {
+			$office = ' Inglês: ' . $nivel[$dados['curriculo']['nivelIdiomaIngles']];
+			$office = chr(149) . ' ' . utf8_decode($office);
+			$pdf->Cell(1, 0.5, $office, 0, 1,'L');
+		}
+
+		$office = $dados['curriculo']['idiomaEspanhol'];
+		if($office != '0' && isset($nivel[$dados['curriculo']['nivelIdiomaEspanhol']])) {
+			$office = ' Espanhol: ' . $nivel[$dados['curriculo']['nivelIdiomaEspanhol']];
+			$office = chr(149) . ' ' . utf8_decode($office);
+			$pdf->Cell(1, 0.5, $office, 0, 1,'L');
+		}
+
+		$office = $dados['curriculo']['idiomaFrances'];
+		if($office != '0' && isset($nivel[$dados['curriculo']['nivelIdiomaFrances']])) {
+			$office = ' Francês: ' . $nivel[$dados['curriculo']['nivelIdiomaFrances']];
+			$office = chr(149) . ' ' . utf8_decode($office);
+			$pdf->Cell(1, 0.5, $office, 0, 1,'L');
+		}
+
+		$office = $dados['curriculo']['idiomaAlemao'];
+		if($office != '0' && isset($nivel[$dados['curriculo']['nivelIdiomaAlemao']])) {
+			$office = ' Alemão: ' . $nivel[$dados['curriculo']['nivelIdiomaAlemao']];
+			$office = chr(149) . ' ' . utf8_decode($office);
+			$pdf->Cell(1, 0.5, $office, 0, 1,'L');
+		}
+
+		$office = $dados['curriculo']['idiomaItaliano'];
+		if($office != '0' && isset($nivel[$dados['curriculo']['nivelIdiomaItaliano']])) {
+			$office = ' Italiano: ' . $nivel[$dados['curriculo']['nivelIdiomaItaliano']];
+			$office = chr(149) . ' ' . utf8_decode($office);
+			$pdf->Cell(1, 0.5, $office, 0, 1,'L');
+		}
+	}
+
+	$informatica = false;
+
+	if($dados['curriculo']['infOffice'] != '0'       ||
+		$dados['curriculo']['infAplGraficas'] != '0' ||
+		$dados['curriculo']['infDes'] != '0'         ||
+		$dados['curriculo']['infManut'] != '0')
+		$informatica = true;
+
+	if($informatica) {
+		$pdf->Ln(0.6);
+		$pdf->SetFont('arial','B',13);	
+		$pdf->Cell(0, 0.6, utf8_decode('INFORMÁTICA'), 0, 1,'L'); 
+		$pdf->Cell(0, -0.5, '_________________________________________________________________', 0, 1, 'L');
+
+		$pdf->Ln(0.7);	
+		
+		$pdf->SetFont('arial', '',12);
+		$office = $dados['curriculo']['infOffice'];
+		if($office != '0' && isset($nivel[$dados['curriculo']['nivelInfOffice']])) {
+			$office = ' Pacote Office (Windows, Word, Excel, Powerpoint): ' . $nivel[$dados['curriculo']['nivelInfOffice']];
+			$office = chr(149) . ' ' . utf8_decode($office);
+			$pdf->Cell(1, 0.5, $office, 0, 1,'L');
+		}
+
+		$office = $dados['curriculo']['infAplGraficas'];
+		if($office != '0' && isset($nivel[$dados['curriculo']['nivelInfAplGraficas']])) {
+			$office = ' Aplicativos Gráficos (Corel, Photoshop, Illustrator): ' . $nivel[$dados['curriculo']['nivelInfAplGraficas']];
+			$office = chr(149) . ' ' . utf8_decode($office);
+			$pdf->Cell(1, 0.5, $office, 0, 1,'L');
+		}	
+
+		$office = $dados['curriculo']['infDes'];
+		if($office != '0' && isset($nivel[$dados['curriculo']['nivelInfDes']])) {
+			$office = ' Desenvolvimento de software (Programação e Design): ' . $nivel[$dados['curriculo']['nivelInfDes']];
+			$office = chr(149) . ' ' . utf8_decode($office);
+			$pdf->Cell(1, 0.5, $office, 0, 1,'L');
+		}
+
+		$office = $dados['curriculo']['infManut'];
+		if($office != '0' && isset($nivel[$dados['curriculo']['nivelInfManut']])) {
+			$office = ' Manutenção de computadores e redes: ' . $nivel[$dados['curriculo']['nivelInfManut']];
+			$office = chr(149) . ' ' . utf8_decode($office);
+			$pdf->Cell(1, 0.5, $office, 0, 1,'L');
+		}	
+	}
+	
+	$imagem = PASTA_IMAGENS . 'logo.png';
+	$pdf->Image($imagem, 15, 27.4, null, 2);		 	
+
+	$pdf->Ln(0.3);
+
+	$pdf->Output();
+
+
+	function tamanhoCelulas(&$celulas)
+	{
+		$total = 0;
+		foreach ($celulas as $key => $celula)
+			$total = $total + $celula[1];
+
+		$retorna;
+
+		foreach ($celulas as $key => $celula)
+			$retorna[$key] = ($celula[1]*100)/$total;
+
+		return $retorna;
+	}
+
+	function idade($data) {
+	    // Separa em dia, mês e ano
+	    list($ano, $mes, $dia) = explode('-', $data);
+	    
+	    // Descobre que dia é hoje e retorna a unix timestamp
+	    $hoje = mktime(0, 0, 0, date('m'), date('d'), date('Y'));
+	    // Descobre a unix timestamp da data de nascimento do fulano
+	    $nascimento = mktime( 0, 0, 0, $mes, $dia, $ano);
+	    
+	    // Depois apenas fazemos o cálculo já citado :)
+	    $idade = floor((((($hoje - $nascimento) / 60) / 60) / 24) / 365.25);
+	 
+	    return $idade;		
+	}
+
+	function data($data)
+	{	
+		if($data == '0000-00-00' || $data == '')
+			return '';
+		list($ano, $mes, $dia) = explode('-', $data);
+		return "$dia/$mes/$ano";	
+	}
+?>

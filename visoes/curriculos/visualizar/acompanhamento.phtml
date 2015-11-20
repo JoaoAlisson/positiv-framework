@@ -1,0 +1,187 @@
+<?php
+function botao($id, $arquivo)
+{
+
+	$botoes  = "<a class=\"tiny ui icon button balao\" target='_blank' data-content='Baixar' href='" . URL . "acompanhamentos/baixar/id:{$id}'><i class=\"download icon\"></i></a>";
+	
+	$botoes .= "<div class=\"tiny ui red icon button balao\" onclick=\"deletarArquivo('$id', '$arquivo')\" data-content='Deletar'><i class=\"trash icon\"></i></div>";
+
+	return $botoes;
+}
+
+function formataText($texto)
+{
+	if(strlen($texto) > 40) {
+		$formato = substr(strrchr($texto, "."), 1);
+		$texto = substr($texto, 0, 30) . '... .' . $formato;
+	}
+
+	return $texto;
+}
+
+?>
+
+<script type="text/javascript">
+	function salvarComentario()
+	{	
+		$('#salvando').html('Salvando...');
+		$('#carregandoIco').show();
+		idComentario = $('#idAcompanhamento').val();
+		coment = $('#comentario').val();
+		caminho = URL + 'acompanhamentos/salvarcomentario';
+		
+		$.ajax({
+			url: caminho,
+			type: 'POST',
+			data: { id : idComentario, comentario : coment },
+			dataType: "json",
+			success: function (result) {
+				$('#alteradoPor').html(result.alteradopor);
+				$('#dataAlteracao').html(result.dataalteracao);
+				$('#salvando').html('Salvar');
+				$('#carregandoIco').hide();
+			}
+	    });	
+	}
+
+	function deletarArquivo(idd, arquivoo) {
+
+		mensagem = 'Deseja realmente deletar o arquivo de <strong>' + arquivoo + '</strong>?';
+		$('#msgConfirmacao').html(mensagem);
+
+		$('#modalConfimar').modal('setting', {
+				closable  : false,
+				onApprove : function() {
+				 	deletarArquivoConfirmado(idd, arquivoo);
+				}
+			}).modal('show'); 
+	}
+
+	function deletarArquivoConfirmado(idd, arquivoo)
+	{	
+		idComentario = $('#idAcompanhamento').val();
+		caminho = URL + 'acompanhamentos/deletararquivo';
+
+		$.ajax({
+			url: caminho,
+			type: 'POST',
+			data: { id : idComentario, idArquivo : idd, arquivo : arquivoo },
+			dataType: "json",
+			success: function (result) {
+				$('#alteradoPor').html(result.alteradopor);
+				$('#dataAlteracao').html(result.dataalteracao);
+				$('#linha' + idd).remove();
+			}
+	    });			
+	}
+
+	//formArquivos
+	function oploadLaudo()
+	{	
+
+		$('#adicionandoLaudo').html('Adicionando...  ');
+		$('#carregandoIcoLaudo').show();
+
+		caminho = URL + 'acompanhamentos/salvararquivo';
+		idComentario = $('#idAcompanhamento').val();
+
+		$('#formArquivos').submit(function(event){
+
+			event.preventDefault();
+
+			var formularioData = new FormData(this);
+
+			//alert(formularioData.id);
+			$.ajax({
+				url: caminho,
+				type: 'POST',
+				data: formularioData,
+				mimeType:"multipart/form-data",
+				cache: false,
+				contentType: false,
+				processData: false,		
+				success: function (result) {
+		
+					retorno = jQuery.parseJSON(result);
+
+					tabela = $('#tabelaListagem > tbody').html();
+
+					novoArquivo = "<tr id='linha" + retorno.id + "'><td>" + retorno.arquivoAbrev + "</td><td>";
+
+					novoArquivo = novoArquivo + "<a class='tiny ui icon button balao' target='_blank' data-content='Baixar' href='" + URL + "acompanhamentos/baixar/id:" + retorno.id + "'><i class='download icon'></i></a>";
+
+					novoArquivo = novoArquivo + "<div class='tiny ui red icon button balao' onclick=\"deletarArquivo('" + retorno.id + "', '" + retorno.arquivo + "')\" data-content='Deletar'><i class='trash icon'></i></div></td></tr>";					
+
+					$('#tabelaListagem > tbody').html(novoArquivo + tabela);
+					
+					$('#alteradoPor').html(retorno.alteradopor);
+					$('#dataAlteracao').html(retorno.dataalteracao);
+					$('#imagem').val('');
+					$('#adicionandoLaudo').html('Adicionar Laudo');
+					$('#carregandoIcoLaudo').hide();					
+				}
+		    });	
+			event.unbind();
+			return false;		
+		});
+
+		$('#formArquivos').submit();
+	}
+</script>
+<div class="ui form formulario" style="width:100%;">
+<div class="ui column center aligned grid" style="width:100%;">
+	<div class="column " style="width:auto !important">
+		<div class="ui left teal aligned segment" style="text-align:left; width:auto!important;">
+			<div class="column divForm" style="text-align:left; width:auto !important;">			
+
+					<input hidden id='idAcompanhamento' name='idAcompanhamento' value='<?php echo $curriculo['acompanhamento']; ?>' />
+					<strong>Atualizado por: </strong><span id='alteradoPor'><?php echo $curriculo['alteradopor']; ?></span>
+					<br>
+					<strong>Em: </strong><span id='dataAlteracao'><?php echo data2($curriculo['dataalteracao']); ?></span>
+					<br>
+					<br>
+
+					<div class="field " id="campo_descricao">
+				      	<label>Comentário</label><div class="ui corner labeled left icon input"><textarea type="text" class="textoLongo camposInput " id="comentario" name="comentario"><?php echo $curriculo['comentario']; ?></textarea><i class="comment icon"></i></div></div><input type="text" name="enviado" hidden="">
+
+					 <div class="ui green vertical labeled icon submit button submeterForm" style="margin-top:-5px;"
+					 onclick="salvarComentario()">
+						<i class="save icon"></i><span id='salvando'>Salvar</span>
+					 </div>	
+					 <?php echo "<img hidden='' id='carregandoIco' width='30px' style='margin-bottom:-10px;'' src='" . URL . "/public/images/carregando.gif'>";	?>
+
+					<br>
+					<br>
+					<div class="field " id="campo_imagem">
+				    	<label id='adicionandoLaudo' style='float:left'>Adicionar Laudo</label>
+			 			<?php echo "<img hidden='' id='carregandoIcoLaudo' width='20px' style='margin-bottom:0px; float:left;' src='" . URL . "/public/images/carregando.gif'>";	?>	
+				    	<form id='formArquivos' name='formArquivos' enctype="multipart/form-data" method="POST" action="<?php echo URL . 'acompanhamentos/salvararquivo/'; ?>">
+				    		<input hidden name='id' type='text' value='<?php echo $curriculo['acompanhamento']; ?>' />
+					    	<div class="ui corner labeled left icon input">
+					    		<input type="file" name="arquivo" id="imagem" value="" class="imagem camposInput" onchange="oploadLaudo()">
+					    		<i class="attach icon"></i>
+					    	</div>
+				    	
+					    </form>
+				    </div>		
+
+					<div class="ui column center aligned grid">
+						<div class="column" style="width:auto;">
+					    <?php
+					    	$HTML->iniciarTabela(); 
+					    	echo '<div id="conteudoTabela"><tbody>';
+					    	foreach ($dados['arquivos'] as $chave => $arquivo) {
+					    		$HTML->iniciarLinha('linha' . $arquivo['id']);
+	        					  $HTML->celula(formataText($arquivo['arquivo']));
+	        					  $HTML->celula(botao($arquivo['id'], $arquivo['arquivo']));
+	        					$HTML->finalizarLinha();
+					    	}
+					    	echo '</tbody></div>';
+					    	$HTML->finalizarTabela();
+					    ?>		 	
+					</div>		
+				</div>					    
+			</div>		
+			</div>
+</div></div>
+</div>

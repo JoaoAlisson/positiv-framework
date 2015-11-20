@@ -1,0 +1,29 @@
+<div style='width:100%; text-align:center; text-transform: uppercase;'>
+	<h2><i class='photo icon'></i>Galeria</h2>
+  <div class="ui vertical labeled icon submit small button" style="margin-top:-10px;" onclick="link('galeria/editar/id:<?php echo $_GET['id']; ?>');">
+    <i class="pencil icon"></i>Editar Galeria
+  </div>
+</div>  
+<br>
+<div class="ui column center aligned grid">
+	<div class="column" style="width: auto;">
+		<div class="ui <?php echo $dados['cor']; ?> segment" style="width: auto; max-width:900px;">	
+			
+			<?php
+				if($dados['campos']['titulo_br'] != '')
+					$HTML->campoVisualizar('titulo_br', $dados['campos']['titulo_br']);
+				if($dados['campos']['titulo_us'] != '')
+					$HTML->campoVisualizar('titulo_us', $dados['campos']['titulo_us']);
+				if($dados['campos']['titulo_fr'] != '')
+					$HTML->campoVisualizar('titulo_fr', $dados['campos']['titulo_fr']);									
+
+				unset($dados['campos']['id']);
+				foreach ($dados['campos'] as $campo => $campoNome)
+					if($campo != 'titulo_br' && $campo != 'titulo_us' && $campo != 'titulo_fr')
+						if($dados['campos'][$campo] != '' && $dados['campos'][$campo] != '0') 
+							$HTML->campoVisualizar($campo, $dados['campos'][$campo]);
+			?>
+			
+		</div>
+	</div>
+</div>

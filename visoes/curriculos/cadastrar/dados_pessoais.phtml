@@ -1,0 +1,652 @@
+<?php
+  function validacoesJs()
+  {
+?>
+var sprytextfield1 = new Spry.Widget.ValidationTextField("nomecampleto", "none", {validateOn:["blur", "change"]});
+
+
+var sprytextfield4 = new Spry.Widget.ValidationTextField("sprytextfield4", "date", {format:"dd/mm/yyyy", validateOn:["blur", "change"]});
+
+
+
+var spryradio1 = new Spry.Widget.ValidationRadio("spryradio1", {validateOn:["change"]});
+
+
+
+var sprytextfield5 = new Spry.Widget.ValidationTextField("sprytextfield5", "none", {validateOn:["blur", "change"]});
+
+
+
+var sprytextfield6 = new Spry.Widget.ValidationTextField("sprytextfield6", "none", {validateOn:["blur", "change"]});
+
+var spryselect41 = new Spry.Widget.ValidationSelect("quantidadeFilhos", {validateOn:["change", "blur"]});
+
+
+var sprytextfield7 = new Spry.Widget.ValidationTextField("sprytextfield7", "none", {validateOn:["blur", "change"]});
+
+
+var sprytextfield8 = new Spry.Widget.ValidationTextField("sprytextfield8", "none", {validateOn:["blur", "change"]});
+
+
+var spryradio2 = new Spry.Widget.ValidationRadio("spryradio2", {validateOn:["blur", "change"]});
+
+
+var sprytextfield2 = new Spry.Widget.ValidationTextField("sprytextfield2", "custom", {validation: "loginemail1", validateOn:["blur"], isRequired:true});
+
+var sprytextfield43 = new Spry.Widget.ValidationTextField("sprytextfield3", "custom", {validation: "teste", validateOn:["blur", "change"]});
+
+var spryRG = new Spry.Widget.ValidationTextField("rgSpan", "none", {validateOn:["blur", "change"]});
+
+var spryMae = new Spry.Widget.ValidationTextField("nomeMae", "none", {validateOn:["blur", "change"]});
+
+var spryselect1 = new Spry.Widget.ValidationSelect("spryselect1", {validateOn:["change", "blur"]});
+
+var spryselect2 = new Spry.Widget.ValidationSelect("spryselect2", {validateOn:["change", "blur"]});
+
+var spryselect222 = new Spry.Widget.ValidationSelect("sprytextfield9", {validateOn:["change", "blur"]});
+
+var sprytextfield23 = new Spry.Widget.ValidationTextField("sprytextfield23", "none", {validateOn:["blur", "change"]});
+
+<?php    
+
+  }
+?>
+
+  <h2>Dados Pessoais<strong><a name="trocaEmail" id="trocaEmail"></a></strong></h2>
+
+
+
+  
+
+
+
+  <table width="100%" border="0" cellpadding="2" cellspacing="1" class="bloco">
+
+
+
+    <tr>
+
+
+
+      <td width="27%" align="right" bgcolor="#F3F3F3"><strong>*Nome completo</strong></td>
+
+
+
+      <td width="73%" bgcolor="#FFFFFF"><label for="nome"></label>
+
+
+
+        <span id="nomecampleto">
+
+
+        <?php $nome = \Positiv\Sessao::pegar('nome'); ?>
+        <input type="text" name="nome" id="nome" value="<?php echo $nome; ?>" style="width:400px"/>
+
+
+
+      <span class="textfieldRequiredMsg">digite seu nome.</span></span></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="right" bgcolor="#F3F3F3"><strong>*E-mail</strong></td>
+
+
+
+      <td bgcolor="#FFFFFF"><span id="sprytextfield2">
+
+
+      <?php $email = \Positiv\Sessao::pegar('email'); ?>
+      <input type="text" name="email" id="email" value="<?php echo $email; ?>" style="width:400px" onchange="pegaEmail()" onfocus="esconderSubmit()" />
+
+
+
+      <span class="textfieldRequiredMsg">Digite seu e-mail.</span><span class="textfieldInvalidFormatMsg" id="email1">Formato Inválido.</span></span></td>
+
+
+
+    </tr>
+
+ <tr>
+
+
+
+      <td align="right" bgcolor="#F3F3F3">Facebook</td>
+
+
+
+      <td bgcolor="#FFFFFF"><span id="facebook">
+
+
+      <?php $face = \Positiv\Sessao::pegar('facebook'); ?>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;https://www.facebook.com/<input type="text" name="facebook" id="faceCampo" value="<?php echo $face; ?>" style="width:200px"/>
+
+
+
+     <span class="textfieldInvalidFormatMsg">Esta conta não existe.</span></span></td>
+
+
+   </tr>
+   <tr>
+      <td align="right" bgcolor="#F3F3F3">Selecione uma foto sua</td>
+      <td bgcolor="#FFFFFF">
+        <?php $foto = \Positiv\Sessao::pegar('foto'); ?>
+        <input type='file' name='foto' id='foto' />
+        <span class="textfieldInvalidFormatMsg" id="mensagemFoto" style="color: #CC3333;"></span>
+      </td>
+   </tr>
+
+
+    <tr>
+
+      <td align="right" bgcolor="#F3F3F3"><strong>*CPF</strong></td>
+
+
+
+      <td bgcolor="#FFFFFF"><span id="sprytextfield3">
+
+
+      <?php $cpf = \Positiv\Sessao::pegar('cpf'); ?>
+      <input name="cpf" type="text" id="cpf" value="<?php echo $cpf; ?>" onblur="" maxlength="11"/>
+
+<span class="textfieldInvalidFormatMsg" id="mensagemCpf">Cpf Inválido.</span><span class="textfieldRequiredMsg">Digite seu CPF.</span></span></td>
+
+
+
+    </tr>
+
+
+    <tr>
+      <td align="right" bgcolor="#F3F3F3"><strong>*RG</strong></td>
+      <td bgcolor="#FFFFFF"><span id="rgSpan">
+      <?php $rg = \Positiv\Sessao::pegar('rg'); ?>
+      <input name="rg" type="text" value="<?php echo $rg; ?>" id="rgCampo" onblur="" maxlength="20"/>
+      <span class="textfieldInvalidFormatMsg" id="mensagemRg">RG Inválido.</span><span class="textfieldRequiredMsg">Digite seu RG.</span></span></td>
+    </tr>
+
+    <tr>
+      <td width="27%" align="right" bgcolor="#F3F3F3"><strong>*Nome da Mãe</strong></td>
+      <td width="73%" bgcolor="#FFFFFF"><label for="nome"></label>
+        <span id="nomeMae">
+        <?php $nomeMae = \Positiv\Sessao::pegar('nomeMae'); ?>
+        <input type="text" name="nomeMae" value="<?php echo $nomeMae; ?>" id="nomeMaeCampo" style="width:400px"/>
+      <span class="textfieldRequiredMsg">Digite o nome da sua mãe.</span></span></td>
+    </tr>    
+
+    <tr>
+
+
+
+      <td align="right" bgcolor="#F3F3F3"><strong>*Data de Nascimento</strong></td>
+
+
+
+      <td bgcolor="#FFFFFF"><span id="sprytextfield4">
+
+
+      <?php $dataNascimento = \Positiv\Sessao::pegar('dataNascimento'); ?>
+      <input type="text" name="dataNascimento" value="<?php echo $dataNascimento; ?>" id="dataNascimento" onkeyup="DigitaData(this)" onblur="DigitaData(this)" />
+
+
+
+      <span class="textfieldRequiredMsg">Digite sua data de nascimento.</span><span class="textfieldInvalidFormatMsg">Data Inválida.</span></span></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="right" bgcolor="#F3F3F3"><strong>*Sexo</strong></td>
+
+
+
+      <td bgcolor="#FFFFFF"><label for="sexo"><span id="spryradio1">
+
+
+          <?php $sexo = \Positiv\Sessao::pegar('sexo'); ?>
+          <input type="radio" name="sexo" value="masculino" <?php echo ($sexo == 'masculino') ? 'checked="checked"' : ''; ?> id="sexoValida_0" /> 
+
+
+
+          Masculino
+
+
+
+
+
+
+
+<input type="radio" name="sexo" <?php echo ($sexo == 'feminino') ? 'checked="checked"' : ''; ?> value="feminino" id="sexoValida_1" /> 
+
+
+
+Feminino
+
+
+
+<br />
+
+
+
+<span class="radioRequiredMsg">Marque seu sexo.</span></span></label></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+    <?php $estadoCivil = \Positiv\Sessao::pegar('estadoCivil'); ?>
+      <td align="right" bgcolor="#F3F3F3"><strong>*Estado Civil</strong></td>
+
+
+
+      <td bgcolor="#FFFFFF"><label for="estado"></label>
+
+        <span id="spryselect1">
+
+        <select name="estadoCivil" id="estadoCivil">
+
+          <option>Selecione</option>
+
+          <option value="1" <?php echo ($estadoCivil == 1) ? 'selected' : ''; ?>>Casado</option>
+
+          <option value="2" <?php echo ($estadoCivil == 2) ? 'selected' : ''; ?>>Solteiro</option>
+
+          <option value="3" <?php echo ($estadoCivil == 3) ? 'selected' : ''; ?>>Divorciado</option>
+
+          <option value="4" <?php echo ($estadoCivil == 4) ? 'selected' : ''; ?>>Viúvo</option>
+
+        </select>
+
+      <span class="selectRequiredMsg">Escolha seu estado civil.</span></span></td>
+
+
+
+    </tr>
+
+    <?php 
+      $qtdFilhos = \Positiv\Sessao::pegar('qtdFilhos'); 
+      $i = 0;
+    ?>
+    <tr>
+      <td align="right" bgcolor="#F3F3F3"><strong>*Quantidade de Filhos</strong></td>
+          <td bgcolor="#FFFFFF">
+            <span id="quantidadeFilhos">
+              <select name="qtdFilhos"/>
+                <option value=""></option>
+                <option value="0" <?php echo ($qtdFilhos == $i++) ? 'selected': ''; ?>>0</option>
+                <option value="1" <?php echo ($qtdFilhos == $i++) ? 'selected': ''; ?>>1</option>
+                <option value="2" <?php echo ($qtdFilhos == $i++) ? 'selected': ''; ?>>2</option>
+                <option value="3" <?php echo ($qtdFilhos == $i++) ? 'selected': ''; ?>>3</option>
+                <option value="4" <?php echo ($qtdFilhos == $i++) ? 'selected': ''; ?>>4</option>
+                <option value="5" <?php echo ($qtdFilhos == $i++) ? 'selected': ''; ?>>5</option>
+                <option value="6" <?php echo ($qtdFilhos == $i++) ? 'selected': ''; ?>>6</option>
+                <option value="7" <?php echo ($qtdFilhos == $i++) ? 'selected': ''; ?>>7</option>
+                <option value="8" <?php echo ($qtdFilhos == $i++) ? 'selected': ''; ?>>8</option>
+                <option value="9" <?php echo ($qtdFilhos == $i++) ? 'selected': ''; ?>>9</option>
+                <option value="10" <?php echo ($qtdFilhos == $i++) ? 'selected': ''; ?>>10</option>
+                <option value="11" <?php echo ($qtdFilhos > $i++)  ? 'selected': ''; ?>>Mais</option>
+              </select>
+            <span class="selectRequiredMsg">Informe a quantidade de filhos</span></span>
+        </td>
+    </tr>  
+
+    <tr>
+
+
+
+      <td width="200" align="right" bgcolor="#F3F3F3"><strong>*CEP</strong></td>
+
+
+
+      <td bgcolor="#FFFFFF"><span id="sprytextfield5">
+
+
+      <?php $cep = \Positiv\Sessao::pegar('cep'); ?>
+      <input type="text" name="cep" id="cep" value="<?php echo $cep; ?>" />
+
+
+
+      <span class="textfieldRequiredMsg">Digite seu cep.</span></span> 
+
+
+
+      <a href="http://www.buscacep.correios.com.br/servicos/dnec/menuAction.do?Metodo=menuEndereco" target="_blank">Esqueci meu cep</a></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="right" bgcolor="#F3F3F3"><strong>*Endereço</strong></td>
+
+
+
+      <td bgcolor="#FFFFFF"><span id="sprytextfield6">
+
+
+        <?php $endereco = \Positiv\Sessao::pegar('endereco'); ?>
+        <input type="text" name="endereco" id="endereco" value="<?php echo $endereco; ?>" style="width:400px"/>
+
+
+
+      <span class="textfieldRequiredMsg">Digite seu endereço.</span></span></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="right" bgcolor="#F3F3F3"><strong>*Número</strong></td>
+
+
+
+      <td bgcolor="#FFFFFF"><span id="sprytextfield7">
+
+
+        <?php $numero = \Positiv\Sessao::pegar('numero'); ?>
+        <input type="text" name="numero" id="numero" value="<?php echo $numero; ?>" />
+
+
+
+      <span class="textfieldRequiredMsg">Digite o número de sua residência ou S/N.</span></span></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="right" bgcolor="#F3F3F3"><strong>Complemento</strong></td>
+
+
+
+      <td bgcolor="#FFFFFF">
+
+      <?php $complemento = \Positiv\Sessao::pegar('complemento'); ?>
+
+      <input type="text" name="complemento" id="complemento" value="<?php echo $complemento; ?>" style="width:400px"/></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="right" bgcolor="#F3F3F3"><strong>*Bairro</strong></td>
+
+
+
+      <td bgcolor="#FFFFFF"><span id="sprytextfield8">
+
+
+        <?php $bairro = \Positiv\Sessao::pegar('bairro'); ?>
+        <input type="text" name="bairro" value="<?php echo $bairro; ?>" id="bairro" />
+
+
+
+      <span class="textfieldRequiredMsg">Digite seu bairro.</span></span></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="right" bgcolor="#F3F3F3"><strong>*Estado</strong></td>
+
+
+
+      <td bgcolor="#FFFFFF"><span id="spryselect2">
+
+      <?php $estadoSessao = \Positiv\Sessao::pegar('estado'); ?>
+
+      <select name="estado" id='estado_cur' onchange="pegarCidades();" help="Selecione o estado em que você reside." class="input">
+        <option label="Selecione" value="">Selecione</option>
+        <?php foreach ($dados['estados'] as $estado) 
+          { 
+            $selecionado = ($estado['id'] == $estadoSessao) ? 'selected' : '';
+            echo "<option label='". $estado['estado'] ."' " . $selecionado . " value='". $estado['id'] ."'>". $estado['estado'] ."</option>";
+          }
+        ?>
+      </select>
+
+<span class="selectRequiredMsg">Escolha seu estado.</span></span></td>
+
+
+
+    </tr>
+
+    <tr>
+
+
+
+      <td align="right" bgcolor="#F3F3F3"><strong>* Cidade</strong></td>
+
+
+
+      <td bgcolor="#FFFFFF"><span id="sprytextfield9">
+
+
+           <select name="cidade" id='cidade' help="Selecione a cidade em que você reside." class="input">
+           <option label="" value=""></option>
+           <?php
+            if(\Positiv\Sessao::pegar('estado') != '')
+              cidades($dados, \Positiv\Sessao::pegar('cidade'));
+           ?>
+          </select>
+<img hidden id="carregandoCidades" width="30px" style="margin-bottom:-10px;" src="<?php echo URL; ?>public/images/carregando.gif">
+          
+      <span class="selectRequiredMsg">Escolha sua cidade.</span></span>
+  
+      </td>
+
+
+
+    </tr>
+
+
+    <tr>
+
+
+
+      <td align="right" bgcolor="#F3F3F3"><p><strong>*Telefones para contato: </strong></p>
+
+
+
+      <p>(Informe ao menos 1 telefone)</p></td>
+
+
+
+      <td bgcolor="#FFFFFF"><table width="100%" border="0">
+
+
+
+        <tr>
+
+
+
+          <td>Fone 1: </td>
+
+
+
+          <td><span id="sprytextfield23">
+
+            <?php $foneCell = \Positiv\Sessao::pegar('foneCell'); ?>
+            <input type="text" value="<?php echo $foneCell; ?>" name="foneCell" id="foneCell" />
+
+            <span class="textfieldRequiredMsg">Digite pelo menos um telefone de contato.</span></span></td>
+
+
+
+          </tr>
+
+
+
+        <tr>
+
+
+
+          <td>Fone 2: </td>
+
+
+          <?php $foneFixo = \Positiv\Sessao::pegar('foneFixo'); ?>
+          <td><input type="text" name="foneFixo" value="<?php echo $foneFixo; ?>" id="foneFixo" /></td>
+
+
+
+          </tr>
+
+
+
+        <tr>
+
+
+
+          <td>Fone 3: </td>
+
+
+          <?php $foneComercial = \Positiv\Sessao::pegar('foneComercial'); ?>
+          <td><input type="text" name="foneComercial" id="foneComercial" value="<?php echo $foneComercial; ?>" /></td>
+
+
+
+          </tr>
+
+
+
+      </table></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="right">&nbsp;</td>
+
+
+
+      <td bgcolor="#FFFFFF">&nbsp;</td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="right" bgcolor="#F3F3F3"><strong>*Está empregado atualmente?</strong></td>
+
+
+
+      <td bgcolor="#FFFFFF"><label for="empregado"><span id="spryradio2">
+
+
+          <?php $empregado = \Positiv\Sessao::pegar('empregado'); ?>
+          <input type="radio" name="empregado" value="1" <?php echo ($empregado == '1') ? 'checKed="checked"' : ''; ?> id="empregado_0" />
+
+
+
+Sim
+
+
+
+<input type="radio" <?php echo ($empregado == '0') ? 'checKed="checked"' : ''; ?> name="empregado" value="0" id="empregado_1" />
+
+
+
+Não<br />
+
+
+
+<span class="radioRequiredMsg">Diga se você está ou não empregado atualmente</span></span></label></td>
+
+
+
+    </tr>
+
+<tr>
+<td align="right" bgcolor="#F3F3F3">Possui carteira de motorista?</td>  
+<td bgcolor="#FFFFFF"><label for="empregado"><span id="spryradio2">
+
+   <?php $habilitacao = \Positiv\Sessao::pegar('habilitacao'); ?>
+   <input type="radio" <?php echo ($habilitacao == '2') ? 'checked="checked"' : ''; ?> name="habilitacao" value="2" id="habilitacaoSim" />
+   Sim
+   <input type="radio" <?php echo ($habilitacao != '2') ? 'checked="checked"' : ''; ?> name="abilitacao" value="1" id="habilitacaoNao" />
+   Não 
+   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+   Categoria:
+   <?php $categoria = \Positiv\Sessao::pegar('categoria'); ?>
+    <select name="categoria" id="categoria" <?php echo ($categoria == '') ? 'disabled' : ''; ?>>
+      <option value="" id="categoriaValor"></option>
+      <option value="A" <?php echo ($categoria == 'A') ? 'selected' : ''; ?>>A</option>
+      <option value="B" <?php echo ($categoria == 'B') ? 'selected' : ''; ?>>B</option>
+      <option value="C" <?php echo ($categoria == 'C') ? 'selected' : ''; ?>>C</option>
+      <option value="D" <?php echo ($categoria == 'D') ? 'selected' : ''; ?>>D</option>
+      <option value="E" <?php echo ($categoria == 'E') ? 'selected' : ''; ?>>E</option>
+    </select>
+   
+</tr>
+
+<tr>
+<td align="right" bgcolor="#F3F3F3">Possui alguma deficiência?</td>  
+<td bgcolor="#FFFFFF"><label for="empregado"><span id="spryradio2">
+  <?php $deficiencia = \Positiv\Sessao::pegar('deficiencia'); ?>
+  <input type="radio" name="deficiencia" value="1" <?php echo ($deficiencia == '1') ? 'checked="checked"' : ''; ?> id="deficienciaSim" />
+   Sim
+  <input type="radio" <?php echo ($deficiencia != '1') ? 'checked="checked"' : ''; ?> name="deficiencia" value="0" id="deficienciaNao"/>
+   Não 
+
+   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  Descreva a deficiência
+  <?php $descricaoDeficiencia = \Positiv\Sessao::pegar('descricaoDeficiencia'); ?>
+  <input type="text" name="descricaoDeficiencia" value="<?php echo $descricaoDeficiencia; ?>" id="descricaoDeficiencia" style="width:300px" <?php echo ($descricaoDeficiencia == '') ? 'disabled' : ''; ?>/>
+</tr>  
+
+  </table>

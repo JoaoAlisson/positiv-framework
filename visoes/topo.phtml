@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+
+   <title>Currículos</title>
+  
+  <link rel="shortcut icon" href="<?php echo URL; ?>favicon.png" type="image/x-icon" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+
+  <script type="text/javascript" src="<?php echo URL; ?>public/js/jquery1-11.js"></script>
+  <script type="text/javascript" src="<?php echo URL; ?>public/js/default.js"></script>
+
+<!--  <script type="text/javascript" src="<?php echo URL; ?>public/js/default.js"></script> -->
+  <script type="text/javascript" src="<?php echo URL; ?>public/js/jquery.mask.min.js"></script> 
+
+  <script type="text/javascript" src="<?php echo URL; ?>public/js/picker.js"></script> 
+  <script type="text/javascript" src="<?php echo URL; ?>public/js/picker.date.js"></script> 
+
+  <script type="text/javascript" src="<?php echo URL; ?>public/semantic.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="<?php echo URL; ?>public/semantic.min.css"/>
+
+  <link rel="stylesheet" type="text/css" href="<?php echo URL; ?>public/css/default.css"/>
+
+  <link rel="stylesheet" type="text/css" href="<?php echo URL; ?>public/css/classic.css"/>
+  <link rel="stylesheet" type="text/css" href="<?php echo URL; ?>public/css/classic.date.css"/>
+
+  <script type="text/javascript">
+    var URL = '<?php echo URL; ?>';
+    var PAGINACAMINHO = <?php echo "'http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]'";?>;
+    var CONTROLLER_GLOBAl = "<?php echo CONTROLE .'/';?>";
+
+    $(document).ready(function(){
+
+      $('.ui.selection.dropdown').dropdown(); 
+      $('.ui.dropdown').dropdown();
+      $('.balao').popup();
+      $('.escondeMenu').click(function(){
+         $('.ui.sidebar').sidebar("hide");
+      });
+
+        $('.ui.sidebar').sidebar('attach events', '.menuLateral');
+    });
+  </script>
+
+</head>
+<body style='background-color:#fff !important;'>
+
+<div class="ui large vertical corlateral inverted labeled icon sidebar menu" id="menu">
+
+  <a class="item escondeMenu" onclick="link('')">
+    <i class="inverted circular red home icon"></i> <b>Positiv</b>
+  </a>
+
+  <a class="item escondeMenu" onclick="link('')">
+    <b>Home</b>
+  </a>
+
+    <a class="item escondeMenu" onclick="link('curriculos/')">
+      <b>Currículos</b>
+    </a>
+
+    <a class="item escondeMenu" onclick="link('vagas/')">
+      <b>Vagas</b>
+    </a>
+
+    <a class="item escondeMenu" onclick="link('usuarios/')">
+      <b>Usuário</b>
+    </a>
+
+</div>
+<div class="ui fixed teal inverted main menu">
+    <div class="container">
+      <a class="launch item menuLateral"><i class="icon list layout"></i> Menu</a>
+      <div class="title item">
+        <b>Lucrativia | </b> Currículos
+      </div>
+      
+       
+      <div class="right menu">
+
+        <a class="balao icon item" data-content="Deslogar" onclick="link('login/deslogar');">
+         <div class="esconder" style="float:left;"> <?php echo Positiv\Sessao::pegar('usuario'); ?> </div>
+            <i class="icon sign out"></i>
+        </a>
+
+      </div>
+    </div>
+  </div>  
+
+<div class="pusher" id="wrap" style='background-color:#fff;'>
+
+<div class="ui center celled aligned grid" style='background-color:#fff; box-shadow: none !important;'>
+  <div class="ui center aligned grid" style="margin-top:25px;">
+    <div class="column">
+      <div class="ui icon menu">
+
+
+<a class="teal item menuprin esconder <?php if(CONTROLE == 'index') echo 'active';?>" id="menu_Home" href="<?php echo URL; ?>"  style="width:100px; padding-left:0px; padding-right:0px;"> <i class="circular inverted teal big home icon"></i>Home </a>
+
+  <a class="teal item menuprin esconder <?php if(CONTROLE == 'curriculos') echo 'active';?>" id="menu_Igreja" href="<?php echo URL . 'curriculos/'; ?>" style="width:100px; padding-left:0px; padding-right:0px;"> <i class="circular teal inverted big file text outline icon"></i>Currículos</a>
+
+  <a class="teal item menuprin esconder <?php if(CONTROLE == 'vagas') echo 'active';?>" id="menu_Igreja" href="<?php echo URL . 'vagas/'; ?>" style="width:100px; padding-left:0px; padding-right:0px;"> <i class="circular teal inverted big list icon"></i>Vagas</a>
+
+  <a class="teal item menuprin esconder <?php if(CONTROLE == 'usuarios') echo 'active';?>" id="menu_Igreja"href="<?php echo URL . 'usuarios/'; ?>" style="width:100px; padding-left:0px; padding-right:0px;"> <i class="circular teal inverted big user icon"></i>Usuário </a>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="conteudoConteiner" style="width:100%; ">
+<div class="ui basic segment" style="width:100%;">
+<div id="conteudo" style="width:100%; padding:0px; margin:0px; margin-top:25px;">

@@ -1,0 +1,74 @@
+<div style="width:100%; text-align:center; text-transform: uppercase;">
+  <h2><i class='file text outline icon'></i>Currículo</h2>
+  <h3><?php echo $dados['curriculo']['nome']; ?></h3>
+</div>
+
+<script type="text/javascript">
+$(document).ready(function(){
+    $('#context1 .menu .item')
+    .tab({
+      context: $('#context1')
+    });
+});
+
+function mudarAba(aba)
+{
+  caminho = URL + 'curriculos/visualizar/id:' + $('#idCurriculo').val() + '/ab:' + aba;
+  window.history.pushState("Currículos", "Currículos", caminho);
+}
+</script>
+
+<style type="text/css">
+  .areaTexto{
+     width:1000px !important;
+  }
+
+  @media screen and (max-width: 1050px) {
+    .areaTexto{
+      width: 100% !important;
+    }
+  }
+
+</style>
+
+<?php $aba = isset($_GET['ab']) ? $_GET['ab'] : 'curriculo'; ?>
+<input id='idCurriculo' value='<?php echo $_GET['id']; ?>' hidden/>
+
+<div class="ui center aligned grid" style="width:auto;">
+  <div class="ui center aligned grid" style="width:auto;">
+    <div class="column left aligned" style="width:auto;">
+
+        <div id="context1" style="width:auto;">
+
+          <div class="ui tab segment active" data-tab="first">
+            <div class="ui top attached tabular menu">
+              <a class="item <?php if($aba == 'curriculo') echo 'active'; ?>" onclick="mudarAba('curriculo')" data-tab="first/a">Currículo</a>
+              <a class="item <?php if($aba == 'acompanhamento') echo 'active'; ?>" onclick="mudarAba('acompanhamento')" data-tab="first/b">Acompanhamento</a>
+              <a class="item <?php if($aba == 'vagas') echo 'active'; ?>" onclick="mudarAba('vagas')" data-tab="first/c">Vagas</a>
+              <a class="item" target='blank' href='<?php echo URL . 'curriculos/pdf/id:' . $_GET['id']; ?>'>PDF</a>
+            </div>
+            <div class="ui bottom attached <?php if($aba == 'curriculo') echo 'active'; ?> tab segment areaTexto" data-tab="first/a">
+                <?php
+                  require RAIZ . SEPARADOR . 'visoes'. SEPARADOR . 'curriculos' . SEPARADOR . 'visualizar' . SEPARADOR  . 'curriculo.phtml';
+                ?> 
+            </div>
+          
+            <div class="ui bottom attached <?php if($aba == 'acompanhamento') echo 'active'; ?> tab segment areaTexto" data-tab="first/b">
+                <?php
+                  require RAIZ . SEPARADOR . 'visoes'. SEPARADOR . 'curriculos' . SEPARADOR . 'visualizar' . SEPARADOR  . 'acompanhamento.phtml';
+                ?>            
+            </div>
+
+            <div class="ui bottom attached <?php if($aba == 'vagas') echo 'active'; ?> tab segment areaTexto" data-tab="first/c">
+                <?php
+                  require RAIZ . SEPARADOR . 'visoes'. SEPARADOR . 'curriculos' . SEPARADOR . 'visualizar' . SEPARADOR  . 'vagas.phtml';
+                ?>   
+            </div>
+
+          </div>
+
+      </div>
+
+    </div>
+  </div>
+</div>

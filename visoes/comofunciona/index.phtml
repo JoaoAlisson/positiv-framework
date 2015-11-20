@@ -1,0 +1,167 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+<title>Cadastro de Currículos</title>
+
+<link href="<?php echo URL; ?>public/css/estiloNovo.css" rel="stylesheet" type="text/css" />
+<link href='http://fonts.googleapis.com/css?family=Alegreya+Sans' rel='stylesheet' type='text/css'>
+
+<link href="<?php echo URL; ?>public/css/estiloPaginaNovo.css" rel="stylesheet" type="text/css" /><link rel="shortcut icon" href="<?php echo URL; ?>favicon.ico" type="image/x-icon" />
+
+<script src="<?php echo URL; ?>public/js/valid.js"></script>
+<script type="text/javascript" src="<?php echo URL; ?>public/js/jquery.js"></script>
+<script type="text/javascript">
+
+function confirmar(id) {
+
+	$('.telaConfirma').fadeIn(500);
+
+}
+
+
+
+function carregar(acao) {
+	if(acao == "abrir"){
+		$('.confirmaFundo').fadeIn(500);
+	}else{
+		$('.telaConfirma').fadeOut(500);
+		$('.confirmaFundo').fadeOut(500);
+	}
+}
+
+
+
+$(document).keydown(function(event) { // caso seja precionado ESC chama mostrarLogin('0')
+        if (event.keyCode == 27) 
+			mostrarLogin('0');
+    });
+
+
+
+function mostrarLogin(acao){
+	if(acao == "1")
+		$('.mascara').fadeIn(400);
+	else
+		$('.mascara').fadeOut(400);
+}
+
+</script>
+
+<script type="text/javascript">
+
+function verificarLogin() {
+	var x = document.getElementById('email2');
+	$.post('verificarLogin.php', { login: x.value },
+		function(output) {
+			$('#retorno').html(output).fadeIn(1000);
+		});
+}
+
+
+
+function mostrarSubmit() {
+
+	$('#submit').fadeIn(200);
+
+	$('#verlogin').fadeOut(200);
+
+}
+
+function esconderSubmit() {
+
+	$('#submit').fadeOut(200);
+
+	$('#retorno').fadeOut(200);
+
+	$('#verlogin').fadeIn(200);
+
+}
+
+
+
+</script>
+
+
+
+</head>
+
+<body>
+
+<!--bloco para confirmação de cadastro de curriculo ou empresa-->
+
+
+
+<div class="topo">
+<div class="topoinner">
+
+
+<div class="menu">
+<div class="menuinner">
+<a href="<?php echo URL; ?>"><img src="<?php echo URL; ?>public/images/titulo.png" width="344" height="65" border="0" /></a><br />
+<div>
+<a href="<?php echo URL; ?>">Página Incial&nbsp;&nbsp;|</a><a href="<?php echo URL; ?>comofunciona/">&nbsp;&nbsp;Como Funciona</a>
+</div>
+</div>
+<!--LOGIN-->
+
+<!--FINAL DO LOGIN-->
+
+
+</div>
+
+</div>
+<div class="transparente"></div>
+</div>
+
+<div class="sombra"></div>
+<div class="conteudo">
+
+	<div class="barra">
+
+  <h3 id="comoFun">Como Funciona o Programa de Gestão de Talentos Lucrativia</h3></div>
+
+<div style="padding:0 30px 0 30px">
+
+<h2>Se você está procurando vaga de Estágio ou Emprego</h2>
+
+<p>Para participar do PROGRAMA DE GESTÃO DE TALENTOS, benefício inovador que só a Lucrativia oferece. É simples e funciona!</p>
+<p>1. Cadastre seu currículo on-line (<a href="<?php echo URL; ?>curriculos/cadastrar" title="Cadastre seu Currículo" target="_blank">clique aqui</a>). Se precisar, você pode imprimir na hora ou atualizar quando for necessário.</p>
+<p>2. Uma cópia do seu currículo será enviada para a equipe de consultores da Lucrativia, que entrará em contato com você caso haja uma oportunidade que combine com seu perfil. Por isso, é importante que seus dados de contato (email e e telefones) estejam corretos.</p>
+<p>3. Depois de cadastrado seu currículo, você pode visualizar as vagas. Apenas os dados básicos da vaga estarão disponíveis no site. Para maiores informações, entre em contato conosco através do telefone (88) 9767-1722 ou pelo email <a href="mailto:curriculos@lucrativia.com">curriculos@lucrativia.com</a></p>
+<p>4. Não deixe de conferir as vagas semanalmente.</p>
+
+<!--
+<h2>EMPRESA, se você precisa contratar profissionais de forma profissional</h2>
+
+<p>O anúncio de vagas pelo PROGRAMA DE GESTÃO DE TALENTOS da Lucrativia é totalmente GRATUITO. Se necessário, um dos nossos consultores pode ajudar no processo de seleção. Temos experiência de contratação com grandes empresas como Votorantin, North Shopping Sobral, Esplanada, Yume Mitsubishi, entre outras. Nosso grande diferencial? Só encaminhados aqueles alunos dentro do perfil escolhido a partir de um criterioso processo de recrutamento e seleção.</p>
+<p>Para cadastrar uma vaga é simples.</p>
+<p>1. Preencha os dados cadastrais da sua empresa (<a href="http://lucrativia.com/curriculos/index.php?pagina=cadEmpresa">clique aqui</a>).</p>
+<p>2. Inclua os dados da vaga. É importante que sejam repassados detalhes da vaga para que o processo de recrutamento seja eficiente. Apenas os dados básicos da vaga serão publicados via site. Os demais detalhes ficarão restritos à equipe da Lucrativia. </p>
+<p>3. Espere o contato de um dos consultores da Lucrativia. Ela entrará em contato para saber suas reais necessidades para encaminharmos quem você realmente precisa.</p>
+<p>4. Uma vez aprovada a vaga, ela estará disponível no site.</p> -->
+<br>
+<h2><strong>Vejam quem contrata com a Lucrativia</strong></h2>
+<div class="parceiros">
+  <p align="center"><img src="<?php echo URL; ?>public/images/parceiros/bravo.jpg" width="122" height="86" /><img src="<?php echo URL; ?>public/images/parceiros/dona-flor.jpg" width="122" height="86" /><img src="<?php echo URL; ?>public/images/parceiros/nova-schin.jpg" width="122" height="86" /><img src="<?php echo URL; ?>public/images/parceiros/nss.jpg" width="122" height="86" /><img src="<?php echo URL; ?>public/images/parceiros/yume.jpg" width="122" height="86" /></p>
+</div>
+
+</div> 
+    
+<div class="clear"></div>
+</div>
+
+<div class="bottom">
+  	﻿<div class="creditos">Copyright Lucrativia 2015 ©, Todos os Direitos Reservados.<br />Developed by C2 Web Soluções</div>
+<div class="clear"></div>  
+
+</div>
+
+
+</body>
+
+</html>

@@ -1,0 +1,25 @@
+<div class='ui column center aligned grid'>
+	<div class='column' style='width:auto;'>
+	<form action='' method='POST'>
+	<label>Separador: </label><input type='text' value='<?php echo isset($_POST['separador']) ? $_POST['separador'] : ''; ?>' name='separador' size='5'/>
+	<input type='submit' value='Alterar' />
+	<br>
+	<br>
+<?php
+	$todos = '';
+	$separador = isset($_POST['separador']) ? $_POST['separador'] : ' ';
+	$separador = ($separador == '') ? ' ' : $separador;
+	foreach ($dados['emails'] as $chave => $email)
+		if(sizeof($dados['emails']) != $chave+1)
+			$todos .= $email['email'] . $separador;
+		else
+			$todos .= $email['email'];
+
+	echo "<FORM name='copiar'>
+			<TEXTAREA style='width: auto;' name=txt rows=10 wrap=VIRTUAL cols=70>$todos</TEXTAREA><BR>
+			<INPUT onclick=javascript:this.form.txt.focus();this.form.txt.select(); type=button value='Selecionar Todos' name=value>
+		</FORM>";
+
+
+?>
+</div></div>

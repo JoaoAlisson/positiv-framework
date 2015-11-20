@@ -1,0 +1,84 @@
+<?php
+function botao2($id, $nome, $vaga)
+{
+	$botoes = "<div class=\"tiny ui red icon button balao\" onclick=\"descandidatar('$id', '$nome', '$vaga')\" data-content='Descandidatar'><i class=\"trash icon\"></i></div>";
+
+	return $botoes;
+}
+?>
+<script type="text/javascript">
+function descandidatar(id, nome, vaga) {
+
+	mensagem = 'Deseja descandidatar <strong>' + nome + '</strong><br>a vaga <strong>' + vaga + '</strong>?';
+	$('#msgConfirmacao').html(mensagem);
+
+	$('#modalConfimar').modal('setting', {
+			closable  : false,
+			onApprove : function() {
+				$('#descandidatar').val(id);
+				$('#form_descandidatar').submit();
+			}
+		}).modal('show');
+}
+</script>
+<form action='' id='form_descandidatar' method='POST'>
+	<input hidden name='descandidatar' id='descandidatar' value='' />	
+</form>
+
+<div class="ui form formulario" style="width:100%;">
+<form action='' enctype='multipart/form-data' class='ui form formulario' id='' method='POST'>
+<div class="ui column center aligned grid" style="width:100%;">
+	<div class="column " style="width:auto !important">
+		<div class="ui left teal aligned segment" style="text-align:left; width:auto!important;">
+			<div class="column divForm" style="text-align:left; width:auto !important;">			
+					<input hidden name='id' value='<?php echo $_GET['id']; ?>' />
+					<div class="field " id="campo_descricao">
+				      	<label>Vagas</label>
+
+						<div class='ui search dropdown selection' id='select_vaga' onkeypress='enterSubmit(event)';>
+										      <input type='hidden' name='vaga' id='input_vaga' style='min-width: 100px;'>
+										      <i class='triangle down icon disabled'></i>
+										      <div class='text' data-value=''></div>
+										      <div class='menu' id=''>
+										      <div class='item' data-value=''></div>
+										      <?php
+										      $vagas = array();
+										      foreach ($dados['vagas'] as $vaga)
+										      	array_push($vagas, $vaga['vaga']);
+
+										      foreach ($dados['vagasAtivas'] as $vaga)
+										      		if(!in_array($vaga['id'], $vagas))
+										      			echo "<div class='item' data-value='" . $vaga['id'] . "'>" . $vaga['titulo'] . "</div>";
+										      ?>
+										   </div></div>
+
+				    </div><input type="text" name="enviado" hidden="">
+
+				    <?php $HTML->submeter(null, null, 'Candidatar'); ?>
+
+					<br>
+					<div class="ui column center aligned grid">
+						<div class="column" style="width:auto;">
+						<h3>Vagas Candidatado</h3>	
+						<table class='ui table segment' id='' style='width:auto;'>
+					    <?php
+					    	echo '<div id="conteudoTabela"><tbody>';
+					    	foreach ($dados['vagas'] as $chave => $vaga) {
+					    		$HTML->iniciarLinha();
+					    		  $externo = ($vaga['externo'] == 0) ? '<i class="sign in icon"></i> ' : '';
+	        					  $HTML->celula($externo . $vaga['titulo']);
+	        					  $HTML->celula($vaga['empresa']);
+	        					  $HTML->celula(botao2($vaga['id'], $curriculo['nome'], $vaga['titulo']));
+	        					$HTML->finalizarLinha();
+					    	}
+					    	echo '</tbody></div>';
+					    	$HTML->finalizarTabela();
+					    ?>		 	
+					</div>		
+				</div>					    
+			</div>		
+			</div>
+</div></div>
+</form>
+</div>
+

@@ -1,0 +1,475 @@
+<?php 
+
+$_GET['pg'] = isset($_GET['pg']) ? $_GET['pg'] : '';
+
+function addBotoes($id, $interno, $arquivos, $acompanhamento){
+
+  $bt = "<a class=\"tiny ui icon button balao\" target='_blank' data-content='Visualizar' href='" . URL . "curriculos/visualizar/id:{$id}'><i class=\"unhide icon\"></i></a>";
+
+  $bt .= "<a class=\"tiny ui icon button balao\" target='_blank' data-content='Comentário' href='" . URL . "curriculos/visualizar/id:{$id}/ab:acompanhamento'><i class=\"comment icon\"></i></a>";
+
+  $bt .= "<a class=\"tiny ui icon button balao\" target='_blank' data-content='Currículo' href='" . URL . "curriculos/pdf/id:{$id}'><i class=\"file pdf outline icon\"></i></a>";
+
+  if($arquivos > 0)
+    $bt .= "<div class=\"tiny ui icon button balao\" target='_blank' data-content='Laudos Anexos' onclick=\"carregararquivos('$acompanhamento')\"><i class=\"attach icon\"></i></div>";
+  else
+    $bt .= "<div class=\"tiny ui icon button disabled balao\"><i class=\"attach icon\"></i></div>";
+
+  if($interno != '0')
+    $bt .= "<a class=\"tiny ui icon button balao\" target='_blank' data-content='Editar' href='" . URL . "curriculos/editar/id:$id'><i class=\"pencil icon\"></i></a>";
+  else
+    $bt .= "<div class=\"tiny ui icon button disabled balao\"><i class=\"pencil icon\"></i></div>";
+
+  return $bt;
+}
+
+
+  function btnOrdenacao($nome, $campo) {
+      return "<a class='small ui button' onclick=\"ordem('$campo');\"><i class='sort icon'></i>$nome</a>";
+  }
+  
+  function formataData($data) {
+    list($data, $hora) = explode(' ', $data);
+    list($ano, $mes, $dia) = explode('-', $data);
+
+    return "$dia/$mes/$ano $hora";
+  }
+
+  function campo($campo, &$HTML, $icone = null) {
+    echo "<div style='width:auto; float: left; text-align:left; margin-right: 20px;'>";
+    $HTML->campoFiltro($campo, $_GET[$campo], $icone);
+    echo '</div>';    
+  }
+
+  function campoSelectEx($campo, $tabela, $titulo, $name, $tipo) {
+    $tipo->campo  = $campo;
+    $tipo->tabela = $tabela;
+    $tipo->setaValor($_GET[$name]);
+    echo "<div style='width:auto; float: left; text-align:left; margin-right: 20px;'>";
+    echo '<label>' . $titulo . '</label><br>';
+    echo $tipo->campo($campo, $name, null, 'onkeypress=\'enterSubmit(event);\'');
+    echo '</div>';        
+  }
+
+  function campoSelect($campo, $titulo, $valores, $tipo) {
+    $tipo->campo  = $campo;
+    $tipo->setaValor(isset($_GET[$campo]) ? $_GET[$campo] : '');
+    $tipo->setaValores($valores);
+    echo "<div style='width:auto; float: left; text-align:left; margin-right: 20px;'>";
+    echo '<label>' . $titulo . '</label><br>';
+    echo $tipo->campo(null, $campo, 'onkeypress=\'enterSubmit(event);\'');
+    echo '</div>';        
+  }  
+
+  function pegaCidades() {
+
+      $idEstado = isset($_GET['estado']) ? $_GET['estado'] : 6;
+      $idEstado = ($idEstado == '') ? 6 : $idEstado;
+      
+      require_once(RAIZ . SEPARADOR . 'modelos' . SEPARADOR . 'cidadesModelo.php');
+      $modelo = new \Positiv\cidadesModelo();
+
+      $cidades = $modelo->cidades($idEstado);
+      $array;
+
+      foreach ($cidades as $cidade)
+        $array[$cidade['id']] = $cidade['cidade'];
+
+      return $array;
+  }
+
+  $tipoFabrica = new \Positiv\TipoFabrica();
+  $selectEx = $tipoFabrica->pegaTipo('chaveEstrangeira');
+  $select   = $tipoFabrica->pegaTipo('select');
+  $nivelComPrimeiroEmprego = $tipoFabrica->pegaTipo('chaveEstrangeira2');
+  //$selectEx->campo = 'cargo';
+  //$selectEx->tabela = 'cargos';
+  //echo $selectEx->campo('cargo');
+
+?> 
+
+<?php if(!isset($_POST['filtraAjax'])) { ?>
+
+<script type="text/javascript">
+  var CONTROLE = 'curriculos';
+
+  $(document).ready(function($) {
+    $('#input_estado').change(function(){
+      estadoId = $('#input_estado').val();
+      caminho = "<?php echo URL; ?>cidades/pegarCidades/";
+
+     // $('#carregandoCidades').show();
+      var variavel = "";
+
+      $.ajax({
+        url: caminho,
+        type: 'POST',
+        data: { estado : estadoId },
+        dataType: "json",
+        success: function (result) {
+          opcoes = "<div class=\'item\' data-value=''></div>";
+          $.each(result, function(chave, city){
+            opcoes = opcoes + '<div class=\'item\' data-value=\'' + city.id + '\'>' + city.cidade + '</div>';
+
+          });
+          //alert(opcoes);
+          $('#valores_cidade').html(opcoes);
+          //$('#carregandoCidades').hide();
+        }
+        });  
+    });
+
+
+    $('.campoData').mask('00/0000');
+    $('.campoData').pickadate({
+      selectYears: true,
+        selectMonths: true,
+        editable: true,
+        format: 'mm/yyyy',
+        formatSubmit: 'mm-yyyy',
+        labelMonthNext: 'Próximo Mês',
+      labelMonthPrev: 'Mês Anterior',
+        monthsFull: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'],
+        weekdaysShort: ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'],
+        today: 'Hoje',
+        clear: 'Limpar',
+        close: 'Cancelar'
+    });
+
+  });
+
+function selecionaTodos() {
+
+    if($('#checkTitulo').is(':checked')) 
+      $('.checkboxTodos').prop('checked', true);
+    else
+      $('.checkboxTodos').prop('checked', false);
+}
+
+function adicionarCurriculos(vaga) {
+  var ids = '';
+  $(".checkboxTodos").each(function() {
+      if($(this).is(':checked')) {
+        if(ids == '')
+          ids = $(this).val();
+        else
+          ids = ids + ',' + $(this).val();
+     }
+  });
+
+  if(ids != '' && $('#vagaAdd').val() != '') {
+    mensagem = 'Adicionando Currículo(s)... <?php echo "<img id=\'carregandoIco\' width=\'25px\' style=\'margin-bottom:-7px;\' src=\'" . URL . "/public/images/carregando.gif\'>"; ?>' ;
+    $('#mensagem2').html(mensagem);
+
+    caminho = "<?php echo URL; ?>vagas/adicionarcurriculos/";
+
+    $.ajax({
+      url: caminho,
+      type: 'POST',
+      data: { id : $('#vagaAdd').val(), curriculos : ids },
+      dataType: "html",
+      success: function (result) {
+        $('#mensagem2').html(result);
+        $('.checkboxTodos').prop('checked', false);
+        $('#checkTitulo').prop('checked', false);
+        //$('#vagaAdd').val('');
+      }
+      }); 
+
+
+    $('#adicionarCurriculosVaga').modal('setting', {
+        closable  : false,
+        onApprove : function() {
+
+        }
+      }).modal('show');   
+  }
+}
+
+function carregararquivos(idAcomp) {
+    mensagem = 'Carregando Arquivos... <?php echo "<img id=\'carregandoIco\' width=\'25px\' style=\'margin-bottom:-7px;\' src=\'" . URL . "/public/images/carregando.gif\'>"; ?>' ;
+    $('#carregarArquivos').html(mensagem);
+
+    caminho = "<?php echo URL; ?>acompanhamentos/pegararquivos/";
+
+    $('#modalArquivos').modal('setting', {
+        closable  : false,
+        onApprove : function() {
+
+        }
+      }).modal('show'); 
+
+    $.ajax({
+      url: caminho,
+      type: 'POST',
+      data: { id : idAcomp },
+      dataType: "html",
+      success: function (result) {
+        $('.carregarArquivos').html(result);
+      }
+      }); 
+}
+</script>
+<div style="width:100%; text-align:center; text-transform: uppercase;">
+  <h2><i class="file text outline icon"></i>Currículos</h2>
+
+  <a class="ui blue vertical labeled icon submit small button" style="margin-top:-10px;" target="blank" href="<?php echo URL; ?>curriculos/cadastrar">
+    <i class="plus icon"></i>Cadastrar
+  </a>
+</div>  
+
+<br>
+
+ <form class="formulario">
+    <div class="ui column center aligned grid">
+       <div class="column" style="width: auto;">
+    <div class="ui teal segment" style="width: auto;">
+    <div style="float:left;">
+        <?php 
+          campo('nome', $HTML, 'user');
+        ?>
+
+<div style="width:auto; float: left; text-align:left; margin-right: 20px;"><div class="field" id="campo_sexo"> <label>Sexo</label><br><div class="ui corner labeled left icon input"> <div class="ui search dropdown selection" id="select_sexo" onkeypress="enterSubmit(event);" onmouseover="">
+<input type="hidden" name="sexo" value="<?php echo $_GET['sexo']; ?>" id="input_sexo" class="" style="min-width:50px;" onchange=" trocaImgSexo('sexo');">
+<i class="male icon disabled" id="masculino_sexo" <?php if($_GET['sexo'] == '2') echo "style='display:none;'" ?>></i>
+<i class="female icon disabled" id="feminino_sexo" <?php if($_GET['sexo'] == '1') echo "style='display:none;'" ?>></i>
+<div class="text" style="min-width:50px;" data-value=""></div> <div class="menu transition hidden" tabindex="-1" style=""> 
+<div class="item" data-value=""></div>
+<div class="item" data-value="1"><i class="male icon"></i>Masculino</div>
+<div class="item" data-value="2"><i class="female icon"></i>Feminino</div>
+</div> </div></div></div></div>
+        
+        <?php  
+          campo('cpf', $HTML, 'pencil'); 
+          //echo '<br>';
+                  
+          $valores = array('1' => 'Qualquer Categoria', 'A' => 'A', 'B' => 'B', 'C' => 'C', 'D' => 'D', 'E' => 'E');
+          campoSelect('habilitacao', 'Habilitação', $valores, $select);     
+
+          $valores = array(1 => 'Sim', 3 => 'Não');
+          campoSelect('empregado', 'Empregado', $valores, $select);  
+
+          $valores = array(1 => 'Sim', 3 => 'Não');
+          campoSelect('deficiencia', 'Deficiente', $valores, $select);   
+
+          campoSelectEx('estado', 'estados', 'Estado', 'estado', $selectEx);
+
+          $valores = pegaCidades();
+          campoSelect('cidade', 'Cidade', $valores, $select);           
+
+          campoSelectEx('cargo', 'cargos', 'Cargo de Interesse', 'cargoInteresse', $selectEx);
+
+          campoSelectEx('segmento', 'segmentos', 'Segmento - Interesse', 'interSegmento1', $selectEx);
+
+          campoSelectEx('nivel', 'niveis', 'Nível - Interesse', 'interNivel1', $nivelComPrimeiroEmprego);
+
+          campoSelectEx('segmento', 'segmentos', 'Segmento - Experiência', 'expSegmento1', $selectEx);
+
+          campoSelectEx('nivel', 'niveis', 'Nível - Experiência', 'expNivel1', $selectEx);
+
+          campo('expNomeDaEmpresa', $HTML, 'building'); 
+
+          campo('expCargo5', $HTML, 'pencil'); 
+
+          //campo('expInicio1', $HTML, 'date'); 
+?>
+
+<?php
+  $data = isset($_GET['expInicio1_submit']) ? $_GET['expInicio1_submit'] : '';
+  if($data != '')
+    $data = str_replace('-', '/', $data);
+  
+?>
+<div style="width:auto; float: left; text-align:left; margin-right: 20px;"><div class="field " id="campo_expInicio1">
+              <label>Data da Experiência</label><br><div class="ui corner labeled left icon input"><input type="text" onfocus="datapick()" class="camposInput campoData" onkeypress="enterSubmit(event);" value="<?php echo $data; ?>" id="input_expInicio1" name="expInicio1"><i class="calendar icon"></i></div></div></div>
+
+
+<?php
+
+
+          $valores = array(1 => 'Fundamental', 2 => 'Ensino Médio', 3 => 'Técnico', 4 => 'Curso Profissionalizante',
+                           5 => 'Livre Docência', 6 => 'Graduação', 7 => 'Pós-graduação', 8 => 'Mestrado', 9 => 'MBA',
+                           10 => 'Doutorado', 11 => 'Pós-doutorado');
+
+          campo('escNomeCurso', $HTML, 'pencil');
+
+          campoSelect('escGrau', 'Grau de Formação', $valores, $select);      
+
+          campoSelectEx('areaformacao', 'areaformacao', 'Área da Formação', 'areaformacao', $selectEx);
+
+          campo('escNomeInstituicao', $HTML, 'university'); 
+
+          $valores = array(1 => 'Cursando', 2 => 'Completo', 3 => 'Incompleto');
+          campoSelect('escAno', 'Cursando', $valores, $select);
+
+          $valores = array(4 => 'Qualquer Nível', 3 => 'Básico', 2 => 'Intermediário', 1 => 'Avançado');
+          campoSelect('idiomaIngles', '<i class="us flag"></i>Inglês', $valores, $select);         
+
+          $valores = array(4 => 'Qualquer Nível', 3 => 'Básico', 2 => 'Intermediário', 1 => 'Avançado');
+          campoSelect('idiomaEspanhol', '<i class="es flag"></i>Espanhol', $valores, $select);                                 
+
+
+          $valores = array(4 => 'Qualquer Nível', 3 => 'Básico', 2 => 'Intermediário', 1 => 'Avançado');
+          campoSelect('infOffice', 'Pacote Office', $valores, $select);         
+
+          $valores = array(4 => 'Qualquer Nível', 3 => 'Básico', 2 => 'Intermediário', 1 => 'Avançado');
+          campoSelect('infAplGraficas', 'Aplicativos Gráficos', $valores, $select);                         
+
+          $valores = array(4 => 'Qualquer Nível', 3 => 'Básico', 2 => 'Intermediário', 1 => 'Avançado');
+          campoSelect('infDes', 'Desenvolvimento de software', $valores, $select); 
+
+          $valores = array(4 => 'Qualquer Nível', 3 => 'Básico', 2 => 'Intermediário', 1 => 'Avançado');
+          campoSelect('infManut', 'Manutenção de comp. e redes', $valores, $select);  
+
+          $valores = array(1 => 'Sim', 2 => 'Não');
+          campoSelect('interno', 'Cadastro Interno', $valores, $select);        
+
+          $val;
+          foreach ($dados['vagas'] as $vagas)
+            $val[$vagas['id']] = $vagas['titulo'];
+          
+          campoSelect('vaga', 'Vagas', $val, $select);   
+
+        ?>
+
+<?php
+  $dataCadastro = isset($_GET['cadastro_submit']) ? $_GET['cadastro_submit'] : '';
+  if($dataCadastro != '')
+    $dataCadastro = str_replace('-', '/', $dataCadastro);
+  
+?>
+<div style="width:auto; float: left; text-align:left; margin-right: 20px;"><div class="field " id="campo_dataCadastro">
+              <label>Data de Cadastro</label><br><div class="ui corner labeled left icon input"><input type="text" onfocus="datapick()" class="camposInput campoData" onkeypress="enterSubmit(event);" value="<?php echo $dataCadastro; ?>" id="dataCadastro" name="cadastro"><i class="calendar icon"></i></div></div></div>
+
+<div style="width:auto; float: left; text-align:left; margin-right: 20px;"><div class="field " id="campo_nome">
+              <label>Palavra Chave</label><br><div class="ui corner labeled left icon input"><input type="text" class="camposInput " onkeypress="enterSubmit(event);" value="<?php echo isset($_GET['palavrachave']) ? $_GET['palavrachave'] : ''; ?>" id="" name="palavrachave"><i class="wizard icon"></i></div></div></div>              
+
+        </div>
+        <br><br>
+
+        <div  style="float:left;">
+    <div style="width:auto; float: left; text-align:left;">
+      <input type="text" name='pg' id='pg' value="<?php echo $_GET['pg']; ?>" hidden/>
+    
+      <input type="text" id="ordem" name='ordem' value="<?php echo isset($_GET['ordem']) ? $_GET['ordem'] : ''; ?>" hidden />
+      <input type="text" id="ordenacao" name='ordenacao' value="<?php echo isset($_GET['ordenacao']) ? $_GET['ordenacao'] : ''; ?>" hidden />
+
+     <br>
+    <div class="ui blue vertical labeled circular icon submit button submeterForm" style="" onClick="filtrar('')" id='submeter'>
+      <i class=" search icon"></i>Filtrar
+    </div>
+
+    <div class="ui blue vertical labeled circular icon submit button submeterForm" style="" onclick="listarEmails()">
+          <i class="mail icon"></i>Emails
+        </div>
+        </div>    
+  </div>
+
+  </div>
+    <div class="ui teal circular label" style="float:left;">
+      <strong id="totalBusc">Total: <?php echo $dados['quantidade']; ?></strong>
+    </div>
+  </div></div>
+  </form>
+<input type='text' id='URL' name='URL' value="<?php echo URL; ?>" hidden>
+
+<div class='ui column center aligned grid'>
+  <div class='column' style='width: auto;'>
+<?php
+  $vagas = '';
+  foreach ($dados['areasAbertas'] as $valor)
+    $vagas .= "<div class='item' data-value='" . $valor['id'] . "'>" . $valor['titulo'] . "</div>";
+
+?>
+
+    <div class='ui corner labeled left  icon input'>
+    <div class='ui search dropdown selection' id='select_$id' onkeypress='enterSubmit(event)';>
+              <input type='hidden' name='vagaAdd' value id='vagaAdd' $complemento style='min-width: 100px;'>
+              <i class='triangle down icon disabled'></i>
+              <div class='text' data-value=''>Adicione Currículos a Vaga</div>
+              <div class='menu' id=''>
+              <div class='item' data-value=''>Adicione Currículos a Vaga</div>
+              <?php echo $vagas; ?>
+    </div></div></div>
+
+
+    <div class="ui blue vertical labeled circular icon submit button submeterForm" style="" onClick="adicionarCurriculos()" id='submeter'>
+      <i class="save icon icon"></i>Salvar
+    </div>
+  </div>
+</div>
+
+<div class='ui column center aligned grid'>
+  <div class='column' style='width: auto;' id='tabela'>
+
+ <?php } ?>
+  
+    <?php
+    $HTML->iniciarTabela(); 
+
+      $HTML->iniciarCabecalho();
+
+        $HTML->titulo('<input type=\'checkbox\' id="checkTitulo" onchange="selecionaTodos();" />');
+        $HTML->titulo(btnOrdenacao('Nome', 'nome'));
+        $HTML->titulo(btnOrdenacao('Email', 'email'));
+        $HTML->titulo(btnOrdenacao('Telefone', 'foneCell'));
+        $HTML->titulo(btnOrdenacao('Dt Atualização', 'dataAtualizacao'));
+        $HTML->titulo("<img hidden='' id='carregandoIco' width='30px' style='margin-bottom:-10px;'' src='" . URL . "/public/images/carregando.gif'>");
+
+      $HTML->finalizarCabecalho();
+
+      foreach ($dados['curriculos'] as $curriculo) {
+        $HTML->iniciarLinha();
+          $HTML->celula('<input type=\'checkbox\' value="' . $curriculo['id'] . '" class="checkboxTodos"/>');
+          $HTML->celula($curriculo['nome']);
+          $HTML->celula($curriculo['email']);
+          $HTML->celula($curriculo['foneCell']);
+          $HTML->celula(formataData($curriculo['dataAtualizacao']));           
+          $HTML->celula(addBotoes($curriculo['id'], $curriculo['interno'], $curriculo['arquivos'], $curriculo['acompanhamento']));
+        $HTML->finalizarLinha();
+      }
+ 
+
+    $HTML->finalizarTabela();
+  ?>
+ 
+
+  <?php require RAIZ . SEPARADOR . 'visoes' . SEPARADOR . 'curriculos' . SEPARADOR . 'paginacao.phtml'; ?>
+
+<?php if(!isset($_POST['filtraAjax'])) { ?>
+   </div>
+  </div>
+<?php } else {
+        echo "<input name='quantidadeResultados' id='quantidadeResultados' value=" . $dados['quantidade'] . ' hidden />';
+      }
+?>  
+
+<div class="ui small modal canfirmar" id="modalArquivos">
+  <i class="close icon"></i>
+  <div class="header">
+  <i class="attach icon"></i>
+    Laudos
+  </div>
+  <div class="content carregarArquivos" id="carregarArquivos"> 
+  </div>
+  <div class="actions">
+    <div class="ui positive labled icon button">
+      Sair
+    </div>
+  </div>
+</div>
+
+<div class="ui small modal canfirmar" id="adicionarCurriculosVaga">
+  <i class="close icon"></i>
+  <div class="header">
+  <i class="list icon"></i>
+    Adicionar à Vaga
+  </div>
+  <div class="content" id="mensagem2"> 
+  </div>
+  <div class="actions">
+    <div class="ui positive labled icon button">
+      Sair
+    </div>
+  </div>
+</div>

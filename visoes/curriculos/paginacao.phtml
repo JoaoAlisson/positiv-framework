@@ -1,0 +1,52 @@
+<?php
+$paginacao = '';
+  //$dados['qtdPaginas'] = 3;
+  $dados['controller'] = 'curriculos';
+  $dados['pagina'] = ($_GET['pg'] == '') ? 1 : $_GET['pg'];
+?>
+<?php if($dados['qtdPaginas'] > 1) { 
+
+  echo "<div class=\"ui pagination menu\" id=\"paginacao\" style='float:left;'>"; 
+    $qtdPgV = ceil($dados['qtdPaginas']/10);
+    $pgV = ceil($dados['pagina']/10);
+    if($qtdPgV > 1){
+      $dsbltd = ($dados['pagina'] == 1) ? "desabled" : "";
+      $onclick = ($dsbltd == "") ? "onclick=\"paginacao('".$dados['controller']."/', '1');\"" : "";
+      $paginacao .= "<a class='$dsbltd icon item' $onclick><i class='double angle left icon'></i></a>";
+    }
+    $dsbltd = ($dados['pagina'] == 1) ? "disabled" : "";
+    $anterior = $dados['pagina'] - 1;
+    $onclick = ($dsbltd == "") ? "onclick =\"paginacao('".$dados['controller']."/', '$anterior');\"" : "";
+    $paginacao .= "<a class='$dsbltd icon item' $onclick><i class='left arrow icon'></i></a>";
+
+    if($pgV > 1)
+       $paginacao .= "<a class='disabled icon item'><strong>...</strong></a>";
+  $inicio = ($pgV - 1)*10 + 1;
+  if($pgV == $qtdPgV)
+    $fin = $dados['qtdPaginas'] - $inicio + 1;
+  else
+    $fin = $inicio + 9;
+  $fin = ($inicio > $fin) ? $inicio : $fin;
+  for($i=$inicio; $i<=$fin; $i++){ 
+     $ativo = ($i == $dados['pagina']) ? "active" : "";
+     $onclick = ($ativo == "") ? "onclick =\"paginacao('".$dados['controller']."/','$i');\"" : "";
+     $paginacao .= "<a class='$ativo item' $onclick>".$i."</a>"; 
+  }
+  
+    if($pgV < $qtdPgV)
+       $paginacao .= "<a class='disabled icon item'><strong>...</strong></a>";
+
+    $dsbltd = ($dados['pagina'] == $dados['qtdPaginas']) ? "disabled" : "";
+    $proxima = $dados['pagina'] + 1;
+    $onclick = ($dsbltd == "") ? "onclick =\"paginacao('".$dados['controller']."/','$proxima');\"" : "";
+    $paginacao .= "<a class='$dsbltd icon item' $onclick><i class='right arrow icon'></i></a>";
+
+    if($qtdPgV > 1){
+      $dsbltd = ($dados['pagina'] == $dados['qtdPaginas']) ? "desabled" : "";
+      $onclick = ($dsbltd == "") ? "onclick=\"paginacao('".$dados['controller']."/','".$dados['qtdPaginas']."');\"" : "";
+     $paginacao .= "<a class='$dsbltd icon item' $onclick><i class='double angle right icon'></i></a>";
+    }
+
+      echo $paginacao."</div>";
+ } ?>
+

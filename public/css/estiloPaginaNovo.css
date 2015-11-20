@@ -1,0 +1,359 @@
+@charset "utf-8";
+
+/* CSS Document */
+
+h2 {
+	margin:20px 0;	
+}
+
+/*SOBRECREVE O TOPO E A TRANSPARENCIA PARA AJUSTAR A APARÊNCIAS DAS PÁGINAS INTERNAS*/
+.topo{
+	height:140px;	
+}
+
+.transparente{
+	top:130px;		
+}
+
+/*SOBRECREVE O TOPO E A TRANSPARENCIA PARA AJUSTAR A APARÊNCIAS DAS PÁGINAS INTERNAS*/
+
+
+
+a{
+	color:#F60;
+	font-size:15px;
+	text-decoration:none;
+
+}
+
+a:hover{
+
+	color:#F30;
+
+}
+
+
+
+table{
+
+	border:none;
+
+}
+
+
+
+.barra{
+
+	margin-bottom:10px;
+	margin-top:-10px;
+	border-bottom:solid 3px #000;	
+	font-size:24px;
+	color:#c45308;
+	padding:10px 0;
+
+}
+
+
+
+.formulario input, .formulario textarea, .formulario select, .formulario file, .formulario input.radio {
+
+	background:#FFF url(../images/inputbg.jpg) repeat-x top;
+
+	border:#CCCCCC solid 1px;
+
+	padding:8px;
+
+	color:#000000;
+
+	font-family:Verdana, Arial, Helvetica, sans-serif;
+
+	margin:5px;
+
+	
+
+	box-shadow: 0px 0px 5px #FFF;
+
+	-webkit-box-shadow: 0px 0px 5px #FFF;
+
+	-moz-box-shadow: 0px 0px 5px #FFF;
+
+}
+
+
+
+.formulario input:hover, input:hover, textarea:hover, select:hover {
+
+	border:#034063 solid 1px;	
+
+	box-shadow: 0px 0px 5px #d1d1d1;
+
+	-webkit-box-shadow: 0px 0px 5px #d1d1d1;
+
+	-moz-box-shadow: 0px 0px 5px #d1d1d1;
+
+}
+
+#button{
+
+	background:#034063;	
+
+	color:#FFF;
+
+}
+
+
+
+/* ESTILO DAS PAGINAS */
+
+
+
+
+.paginas #empresa{
+
+	background:url(../images/logo_empresa.png) no-repeat;
+
+	position:absolute;
+
+	padding:50px 0 0 140px;
+
+	height:40px;
+
+	margin-top:-40px;
+
+
+
+}
+
+
+
+.paginas #comoFun{
+
+	background:url(../images/comofunc.png) no-repeat;
+
+	position:absolute;
+
+	padding:50px 0 0 140px;
+
+	height:40px;
+
+	margin-top:-40px;
+
+
+
+}
+
+
+
+.paginas #cadCurriculo{
+
+	background:url(../images/cadCurriculo.png) no-repeat;
+
+	position:absolute;
+
+	padding:50px 0 0 140px;
+
+	height:40px;
+
+	margin-top:-40px;
+
+
+
+}
+
+
+
+.bloco {
+
+	background:#f6f7f8;
+	padding:10px;
+
+}
+
+
+
+.bloco_r {
+
+	background:#e9e9e9 url(../images/bg_conteudo.jpg) right repeat-y;
+
+	border:#CCC solid 1px;	
+
+	padding:10px;
+
+	
+
+	box-shadow: 0px 0px 5px #999;
+
+	-webkit-box-shadow: 0px 0px 5px #999;
+
+	-moz-box-shadow: 0px 0px 5px #999;
+
+	
+
+	-moz-border-radius: 5px;
+
+	-o-border-radius: 5px;
+
+	-webkit-border-radius: 5px;
+
+	-khtml-border-radius: 5px;
+
+	border-radius: 5px;	
+
+}
+
+
+.confirmaFundo{
+
+	background:url(../images/bg_confirm.png) repeat;
+	position:fixed;
+	left:0;
+	top:0;
+	width:100%;
+	height:100%;
+	z-index:200;	
+
+}
+
+#loading{
+
+	background:url(../images/ajax-loader.gif) no-repeat center;
+	position:absolute;
+	width:820px;
+	height:480px;
+	left:50%;
+	margin-left:-410px;
+	top:50%;
+	margin-top:-260px;
+}
+
+
+
+.telaConfirma{
+	background:#eef0f0;
+	padding:20px;
+	position:fixed;
+	z-index:200;
+	width:790px;
+	margin-top:-80px;
+
+	-moz-border-radius: 5px;
+	-o-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	-khtml-border-radius: 5px;
+	border-radius: 5px;
+
+	box-shadow: 0px 0px 5px #003;
+	-webkit-box-shadow: 0px 0px 5px #003;
+	-moz-box-shadow: 0px 0px 5px #003;
+}
+
+#opcaoConfirm{
+
+	background:#FFF url(../images/bg_opcoes_confirm.jpg) repeat-x bottom;
+
+	height:153px;	
+	width:165px;
+	margin:20px 30px 0 40px;
+	float:left;
+	padding:10px;
+	text-align:center;
+	color:#666;
+	font-size:12px;
+	font-weight:bold;
+	border:solid #CCC 1px;
+
+	-moz-border-radius: 5px;
+	-o-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	-khtml-border-radius: 5px;
+	border-radius: 5px;
+}
+
+#opcaoConfirm:hover{
+
+	border:solid #062f4f 1px;	
+	color:#062f4f;	
+
+}
+
+
+#sucesso {
+
+	background:#FFF url(../images/bg_opcoes_confirm.jpg) repeat-x bottom;	
+	height:100px;	
+	padding:10px;
+	text-align:center;
+	color:#062f4f;
+	font-size:16px;
+	font-weight:bold;
+	border:#FFF solid 1px;
+
+	-moz-border-radius: 5px;
+	-o-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	-khtml-border-radius: 5px;
+	border-radius: 5px;
+}
+
+#imagemTexto{
+
+	background:url(../images/select.png) left top no-repeat;
+	height:110px;	
+	padding-top:40px;
+}
+
+.telaConfirma h2{
+	text-align:center;
+	color:#062f4f;
+	margin:30px;
+}
+
+.vagas{
+
+	padding:10px;
+	background-color:#FFF;
+
+	box-shadow: 0px 0px 5px #d0cece;
+	-webkit-box-shadow: 0px 0px 5px #d0cece;
+	-moz-box-shadow: 0px 0px 5px #d0cece;
+
+	-moz-border-radius: 5px;
+	-o-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	-khtml-border-radius: 5px;
+	border-radius: 5px;
+	text-transform:lowercase;
+	font-size:18px;
+	margin:30px 0 0 80px;
+
+}
+
+.vagas th{
+
+	background:#00405f url(../images/top.png) left no-repeat;
+
+	padding:5px;
+
+	color:#FFF;
+
+	font-weight:bold;
+
+}
+
+#verlogin {margin-top:10px;cursor:pointer}
+
+#verlogin spam{
+	border:#CCC solid 1px;
+	padding:5px;
+	background:#004a71;
+
+	-moz-border-radius: 5px;
+	-o-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	-khtml-border-radius: 5px;
+	border-radius: 5px;
+}
+#verlogin spam:hover {border:#003 solid 1px}
+#verlogin a{ color:#FFF}
+#fail{color:#F00;font-weight:bold;text-align:center}
+#ok{color:#063;font-weight:bold;text-align:center}

@@ -1,0 +1,125 @@
+<?php
+  function validacoesJs()
+  {
+?>
+var sprytextfield61 = new Spry.Widget.ValidationTextField("loginemail", "custom", {validation: "loginemail1", validateOn:["blur"], isRequired:true});
+
+var sprytextfield21 = new Spry.Widget.ValidationTextField("sprytextfield21", "none", {minChars:4, maxChars:20, validateOn:["change"]});
+
+
+
+var sprytextfield22 = new Spry.Widget.ValidationTextField("sprytextfield22", "none", {minChars:4, maxChars:20, validateOn:["change"]});
+
+<?php    
+
+  }
+?>
+  <h2>Configuração de Login</h2>
+
+
+
+  
+
+
+
+  <table width="100%" border="0" cellpadding="2" cellspacing="1" class="bloco">
+
+
+
+    <tr>
+
+
+
+      <td colspan="2" bgcolor="#d9e3e8"><strong>Dados para utilização do Sistema</strong></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="right" bgcolor="#F3F3F3"><strong>Login/Email:</strong></td>
+
+
+
+      <td bgcolor="#FFFFFF"><span id="loginemail">
+
+      <input name="email2" type="text" id="email" value="<?php echo \Positiv\Sessao::pegar('email'); ?>" style="width:300px;"/>
+
+      <span class="textfieldRequiredMsg">Digite um email como seu login.</span><span id="email1" class="textfieldInvalidFormatMsg">Formato de email incorreto.</span></span>
+
+
+
+      Seu Login é o E-mail inserido nos Dados Pessoais.</td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="right" bgcolor="#F3F3F3"><strong>*Senha:</strong></td>
+
+
+
+      <td bgcolor="#FFFFFF"><span id="sprytextfield21">
+
+
+
+      <input type="password" name="senha" id="senha" />
+
+
+
+      <span class="textfieldRequiredMsg">Digite sua senha.</span><span class="textfieldMinCharsMsg">Sua senha deve conter no mínimo 4 caracteres.</span><span class="textfieldMaxCharsMsg">Sua deve deve conter no máximo 20 caracteres.</span></span></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="right" bgcolor="#F3F3F3"><strong>*Confirmação de senha:</strong></td>
+
+
+
+      <td bgcolor="#FFFFFF"><span id="sprytextfield22">
+
+
+
+      <input type="password" name="senha2" id="senha2" />
+
+
+
+      <span class="textfieldRequiredMsg">Digite sua senha novamente.</span><span class="textfieldMinCharsMsg">Sua senha deve conter no mínimo 4 caracteres.</span><span class="textfieldMaxCharsMsg">Sua senha deve conter no máximo 20 caracteres.</span></span></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td colspan="2" align="center" bgcolor="#F3F3F3" height="45px;"><div id="retorno"></div></td>
+
+
+
+    </tr>
+
+
+
+  </table>  

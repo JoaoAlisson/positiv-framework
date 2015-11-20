@@ -1,0 +1,23 @@
+<div style='width:100%; text-align:center;'>
+	<h2>Cadastrar Usuário<h2>
+</div>
+
+<?php $HTML->formulario(); ?>
+<div class='ui column center aligned grid'>
+	<div class='column' style='width:auto;'>
+		<div class='ui teal left aligned segment' style='text-align:left;'>	
+			<div class='column divForm'>			
+				<?php
+					$HTML->campo('nome');
+					$HTML->campo('login');
+				?>			
+			</div>	
+			<br>
+				<?php $HTML->submeter(); ?>	
+			</div>
+
+			
+		</div>
+	</div>
+</div>
+<?php $HTML->formularioFim(); ?>
